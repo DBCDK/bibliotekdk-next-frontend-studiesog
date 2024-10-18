@@ -29,7 +29,6 @@ import {
   setTranslations,
 } from "@/components/base/translate/Translate";
 
-import Banner from "@/components/banner/Banner";
 import Footer from "@/components/footer";
 import Matomo from "@/components/matomo";
 import BodyScrollLock from "@/components/scroll/lock";
@@ -242,7 +241,6 @@ export default function MyApp({ Component, pageProps: _pageProps, router }) {
               <BodyScrollLock router={router} />
               <div id="layout">
                 <SkipToMainLink />
-                <Banner />
                 <Notifications />
                 <HelpHeader />
 
