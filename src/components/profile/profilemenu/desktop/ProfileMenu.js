@@ -172,8 +172,6 @@ const menuItems = [
   "loansAndReservations",
   "bookmarks",
   "orderHistory",
-  "myLibraries",
-  "myProfile",
   "savedSearches",
 ];
 
