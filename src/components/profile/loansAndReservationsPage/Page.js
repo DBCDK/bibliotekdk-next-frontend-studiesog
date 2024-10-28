@@ -10,14 +10,12 @@ import {
 } from "@/lib/utils";
 import useBreakpoint from "@/components/hooks/useBreakpoint";
 import { arangeLoanerInfo } from "@/lib/userdataFactoryUtils";
-import Link from "@/components/base/link";
 import { useEffect, useState } from "react";
 import useLoanerInfo from "@/components/hooks/user/useLoanerInfo";
 import {
   formatMaterialTypesToPresentation,
   manifestationMaterialTypeFactory,
 } from "@/lib/manifestationFactoryUtils";
-import useAgencyFromSubdomain from "@/components/hooks/useSubdomainToAgency";
 
 const SKELETON_ROW_AMOUNT = 2;
 
