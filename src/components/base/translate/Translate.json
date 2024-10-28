@@ -5180,6 +5180,14 @@
       }
     },
     "profile": {
+      "profileNotFoundTitle": {
+        "da": "Bruger blev ikke fundet",
+        "en": "User not found"
+      },
+      "profileNotFoundText": {
+        "da": "Vi kunne ikke finde dig som bruger i vores system. Kontakt dit bibliotek og få hjælp til oprettelse af en brugerprofil.",
+        "en": "We couldn’t find you as a user in our system. Please contact your library for assistance with creating a user profile."
+      },
       "administer": {
         "da": "Administrer",
         "en": "Administer"
