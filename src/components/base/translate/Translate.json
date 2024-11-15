@@ -570,12 +570,12 @@
         "en": "Skip to content"
       },
       "heroTxt": {
-        "da": "Let søgning for elever og lærere",
-        "en": "Easy search for students and teachers"
+        "da": "Biblioteksbasen",
+        "en": "Library base"
       },
       "readMore": {
-        "da": "Studiesøg er en enkel grænseflade, der gør det let at søge efter bøger, artikler og gymnasierelevante kilder ét sted.",
-        "en": "Studiesøg is a simple interface that makes it easy to search for books, articles and sources relevant to high school students in one place."
+        "da": "Søg i skolens bøger, avisartikler, Faktalink, Forfatterweb, Infomedia, Filmcentralen, Videnskab.dk -  og meget mere.",
+        "en": "Search the schools books, articles, Faktalink, Forfatterweb, Infomedia, Filmcentralen, Videnskab.dk - and much more."
       },
       "searchButton": {
         "da": "Søg",

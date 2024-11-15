@@ -20,29 +20,29 @@ import useAgencyFromSubdomain from "@/components/hooks/useSubdomainToAgency";
  * cookie settings
  * @returns {React.JSX.Element}
  */
-const FirstColumn = () => {
-  let label = Translate({ context: "footer", label: "hvad_er_bibliotek_dk" });
-  return (
-    <div className={styles.about}>
-      <Text type="text3" lines={1}>
-        {label}
-      </Text>
-      <div className={styles.spacer}></div>
-      <Link
-        border={{ bottom: { keepVisible: true } }}
-        onClick={() => Cookiebot.show()}
-        className={styles.footerlink}
-      >
-        <Text tag="span" type="text3">
-          {Translate({
-            context: "general",
-            label: "administer_cookies",
-          })}
-        </Text>
-      </Link>
-    </div>
-  );
-};
+// const FirstColumn = () => {
+//   let label = Translate({ context: "footer", label: "hvad_er_bibliotek_dk" });
+//   return (
+//     <div className={styles.about}>
+//       <Text type="text3" lines={1}>
+//         {label}
+//       </Text>
+//       <div className={styles.spacer}></div>
+//       <Link
+//         border={{ bottom: { keepVisible: true } }}
+//         onClick={() => Cookiebot.show()}
+//         className={styles.footerlink}
+//       >
+//         <Text tag="span" type="text3">
+//           {Translate({
+//             context: "general",
+//             label: "administer_cookies",
+//           })}
+//         </Text>
+//       </Link>
+//     </div>
+//   );
+// };
 
 /**
  * Second column holds link to contact, help, press etc.
@@ -63,6 +63,18 @@ const SecondColumn = () => {
         </Text>
       </div>
       <ContactLinks />
+      <Link
+        border={{ bottom: { keepVisible: true } }}
+        onClick={() => Cookiebot.show()}
+        className={styles.footerlink}
+      >
+        <Text tag="span" type="text3">
+          {Translate({
+            context: "general",
+            label: "administer_cookies",
+          })}
+        </Text>
+      </Link>
     </React.Fragment>
   );
 };
@@ -154,26 +166,13 @@ const FooterSection = () => {
           data-cy="footer-section"
         >
           <Col
-            md={{ span: 3, order: 1, offset: 1 }}
-            xs={{ span: 12, order: 3 }}
-            className={styles.padder}
-            data-cy="footer-column"
-          >
-            <FirstColumn />
-          </Col>
-          <Col
-            md={{ span: 3, order: 3, offset: 1 }}
-            xs={{ span: 6, order: 1 }}
+            // md={{ span: 3, order: 3, offset: 1 }}
+            // xs={{ span: 6, order: 1 }}
             className={styles.padder}
             data-cy="footer-column"
           >
             <SecondColumn />
           </Col>
-          <Col
-            md={{ span: 3, order: 2 }}
-            xs={{ span: 6, order: 2 }}
-            data-cy="footer-column"
-          ></Col>
         </Row>
       </Container>
     </footer>
