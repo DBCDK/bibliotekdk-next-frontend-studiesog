@@ -1,12 +1,8 @@
-import Soegning from "@/components/helptexts/soegning";
-import styles from "@/components/article/content/Content.module.css";
 import BodyParser from "@/components/base/bodyparser";
 import Head from "next/head";
 import { Header } from "@/components/header";
 import Section from "@/components/base/section";
 import Translate from "@/components/base/translate";
-
-const body = "";
 
 function Soegninghjaelp() {
   // return <Soegning />;
