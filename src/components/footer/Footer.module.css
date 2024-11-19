@@ -31,16 +31,6 @@
   --underline-bottom-hover-color: var(--white);
 }
 
-.about {
-  padding-top: var(--pt5);
-}
-
-@media (min-width: 768px) {
-  .about {
-    padding-top: 0;
-  }
-}
-
 /* Print styles */
 
 @media print {
