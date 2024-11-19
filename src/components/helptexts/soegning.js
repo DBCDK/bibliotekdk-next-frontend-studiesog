@@ -5,8 +5,9 @@ import Head from "next/head";
 import Header from "@/components/header";
 import Section from "@/components/base/section";
 
-const styles = {};
-function HelpTextBody() {
+import styles from "./helptexts.module.css";
+
+export default function Soegning() {
   return (
     <>
       <Header />
@@ -26,16 +27,21 @@ function HelpTextBody() {
             type="title2"
             style={{ marginBottom: "12px", marginTop: "24px" }}
           >
-            Søgning
+            Søgning i StudieSøg
           </Title>
-
           <Text type="text3" dataCy="advanced-search-description">
-            Er du studerende, underviser, forsker eller har du særlige
-            søgebehov, kan du søge mere avanceret og selv sammensætte din
-            søgning på den avancerede søgeside. Du tilgår avanceret søgning ved
-            at klikke på luppen til højre for søgeboksen.
+            StudieSøg tilbyder to former for søgning:
           </Text>
-
+          <Text type="text3" tag="span">
+            <strong>Feltsøgning, </strong>
+            hvor du udfylder felter med søgeord
+          </Text>
+          <br />
+          <Text type="text3" tag="span">
+            <strong>Søgning med søgekoder, </strong>
+            hvor du ved hjælp af søgekoder selv sammensætter din søgning. Her
+            bruger du et særligt søgesprog, CQL.
+          </Text>
           <Title
             tag="h2"
             type="title4"
@@ -43,7 +49,6 @@ function HelpTextBody() {
           >
             Feltsøgning
           </Title>
-
           <Text type="text3" dataCy="field-search-description">
             Du kan søge ved at bruge feltsøgningen, hvor du sammensætter
             søgningen ved hjælp af felter, der bindes sammen af operatorerne OG,
@@ -52,13 +57,9 @@ function HelpTextBody() {
           <Text type="text3" dataCy="field-search-instructions">
             Brug desuden dropdown-boksene nederst på siden til at afgrænse din
             søgning til et bestemt tidsinterval, et bestemt sprog, materialetype
-            og aldersgruppe.
+            og aldersgruppe. Her kan du også vælge, om NOTAs materialer skal
+            være med i din søgning.
           </Text>
-          <img
-            src="/img/fieldsearch.webp"
-            alt="Eksempel på feltsøgning"
-            style={{ margin: "50px 0" }}
-          />
 
           <Title
             tag="h2"
@@ -67,7 +68,6 @@ function HelpTextBody() {
           >
             Trunkering
           </Title>
-
           <Text type="text3" dataCy="truncation-description">
             Hvis du ikke er helt sikker på endelsen af dit søgeord eller bare
             gerne vil søge bredt, kan du trunkere dit søgeord med en asterisk *.
@@ -76,11 +76,6 @@ function HelpTextBody() {
             på alle ord, der starter med <strong>klima</strong>:
             Klimaforandringer, klimapolitik, klimaforskning osv.
           </Text>
-          <img
-            src="/img/trunkering.webp"
-            alt="Eksempel på feltsøgning"
-            style={{ margin: "50px 0" }}
-          />
 
           <Title
             tag="h2"
@@ -89,7 +84,6 @@ function HelpTextBody() {
           >
             Kommandosøgning
           </Title>
-
           <Text type="text3" dataCy="command-search-description">
             Du kan også søge med søgekoder. Klik på Rediger som CQL.
           </Text>
@@ -103,22 +97,16 @@ function HelpTextBody() {
               }
             </li>
           </ul>
-          <img
-            src="/img/cql-search.webp"
-            alt="Eksempel på feltsøgning"
-            style={{ margin: "50px 0" }}
-          />
+
           <Text
-            tag="p"
-            type="text2"
+            type="text3"
             className={styles.warning}
             style={{ marginBottom: "46px" }}
           >
-            Vær opmærksom på, at hvis du vælger at redigere din feltsøgning i
-            CQL, kan du ikke gå tilbage til feltsøgning igen.
+            <strong>Vær opmærksom på</strong>, at hvis du vælger at redigere din
+            feltsøgning i CQL, kan du ikke gå tilbage til feltsøgning igen.
           </Text>
-
-          <table className={styles.table}>
+          <table className={styles.tableexamples}>
             <thead>
               <tr>
                 <th>
@@ -136,7 +124,7 @@ function HelpTextBody() {
                 </th>
                 <td>
                   <Text type="text3">{'dk5="85"'}</Text>
-                  <br />
+
                   <Text type="text3">{'dk5="79.62"'}</Text>
                 </td>
               </tr>
@@ -162,17 +150,17 @@ function HelpTextBody() {
                 </th>
                 <td>
                   <Text type="text3">{'publicationyear="2020"'}</Text>
-                  <br />
+
                   <Text type="text3">
                     {'publicationyear within "2020 2019"'}
                   </Text>
-                  <br />
+
                   <Text type="text3">publicationyear &gt; 2021</Text>
-                  <br />
+
                   <Text type="text3">publicationyear &gt;= 2021</Text>
-                  <br />
+
                   <Text type="text3">publicationyear &lt; 1984</Text>
-                  <br />
+
                   <Text type="text3">publicationyear &lt;= 1984</Text>
                 </td>
               </tr>
@@ -205,7 +193,6 @@ function HelpTextBody() {
               {/* Add other rows as needed */}
             </tbody>
           </table>
-
           <Text
             type="text3"
             dataCy="search-codes-link"
@@ -224,5 +211,3 @@ function HelpTextBody() {
     </>
   );
 }
-
-export default HelpTextBody;
