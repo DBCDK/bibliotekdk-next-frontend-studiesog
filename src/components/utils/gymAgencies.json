@@ -19,7 +19,9 @@
     "pickupAllowed": true,
     "branchCatalogueUrl": "https://surf.cicero-suite.com/institution/DK-872600",
     "lookupUrl": "https://surf.cicero-suite.com/institution/DK-872600/record/_IDNR_/872600-katalog:_IDNR_",
-    "temporarilyClosed": false
+    "temporarilyClosed": false,
+    "branchEmail": "RGBiblioteket@roskilde-gym.dk",
+    "branchPhone": "46 30 87 18"
   },
   "greve": {
     "branchId": "874260",
@@ -37,7 +39,9 @@
     "branchWebsiteUrl": "http://www.greve-gym.dk/Undervisning/Biblioteket",
     "branchCatalogueUrl": "https://greve.gym.bib.dk/",
     "lookupUrl": "https://greve.gym.bib.dk/",
-    "temporarilyClosed": false
+    "temporarilyClosed": false,
+    "branchEmail": "GGbibliotek@greve-gym.dk",
+    "branchPhone": "43972030"
   },
   "slagelse": {
     "branchId": "872320",
@@ -51,7 +55,9 @@
     "postalCode": "4200",
     "postalAddress": "Willemoesvej 2A",
     "pickupAllowed": false,
-    "temporarilyClosed": true
+    "temporarilyClosed": true,
+    "branchEmail": "ol@slagelse-gym.dk",
+    "branchPhone": "58555959"
   },
   "stenhus": {
     "branchId": "875140",
@@ -72,7 +78,9 @@
     "pickupAllowed": true,
     "branchCatalogueUrl": "https://surf.cicero-suite.com/institution/DK-8751400/record/_IDNR_/8751400-katalog:_IDNR_",
     "lookupUrl": "https://surf.cicero-suite.com/institution/DK-8751400/record/_IDNR_/875140-katalog:_IDNR_",
-    "temporarilyClosed": false
+    "temporarilyClosed": false,
+    "branchEmail": "mr@stenhus-gym.dk",
+    "branchPhone": "50 91 11 09"
   },
   "odense": {
     "branchId": "872960",
@@ -87,7 +95,9 @@
     "postalCode": "5000",
     "postalAddress": "Jernbanegade 34",
     "pickupAllowed": false,
-    "temporarilyClosed": true
+    "temporarilyClosed": true,
+    "branchEmail": "biblioteket@odensekatedralskole.dk",
+    "branchPhone": "66 12 22 40"
   },
   "soroeakademi": {
     "branchId": "861640",
@@ -101,6 +111,8 @@
     "postalCode": "4180",
     "postalAddress": "Akademigrunden 8",
     "pickupAllowed": false,
-    "temporarilyClosed": true
+    "temporarilyClosed": true,
+    "branchEmail": "biblioteket@soroeakademi.dk",
+    "branchPhone": "57 86 57 94"
   }
 }

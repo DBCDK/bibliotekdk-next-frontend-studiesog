@@ -61,6 +61,8 @@ const SecondColumn = () => {
         <Text type="text3">
           {agency?.city} {agency?.postalCode}
         </Text>
+        <Text type="text3">{agency?.branchEmail}</Text>
+        <Text type="text3">{agency?.branchPhone}</Text>
       </div>
       <ContactLinks />
       <Link
