@@ -7,6 +7,10 @@ export function useInputFields(fieldSearchFromUrl, workType) {
   const [inputFields, setInputFields] = useState([]);
 
   useEffect(() => {
+    setInputFields(getInitialInputFields(workType));
+  }, [workType]);
+
+  useEffect(() => {
     setInputFields(
       fieldSearchFromUrl.inputFields || getInitialInputFields(workType)
     );
