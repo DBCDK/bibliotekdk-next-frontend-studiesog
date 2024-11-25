@@ -35,6 +35,33 @@ const heroPath = {
   soroeakademi: "/schools/hero/soroeakademi.webp",
 };
 
+const heroTxtsLabels = {
+  greve: {
+    heroTxt: "greveHeroTxt",
+    readMore: "greveReadMore",
+  },
+  roskilde: {
+    heroTxt: "roskildeHeroTxt",
+    readMore: "roskildeReadMore",
+  },
+  slagelse: {
+    heroTxt: "slagelseHeroTxt",
+    readMore: "slagelseReadMore",
+  },
+  stenhus: {
+    heroTxt: "stenhusHeroTxt",
+    readMore: "stenhusReadMore",
+  },
+  odense: {
+    heroTxt: "odenseHeroTxt",
+    readMore: "odenseReadMore",
+  },
+  soroeakademi: {
+    heroTxt: "soroeakademiHeroTxt",
+    readMore: "soroeakademiReadMore",
+  },
+};
+
 const faviconpaths = {
   roskilde: "/schools/favicon/roskilde.ico",
   greve: "/schools/favicon/greve.ico",
@@ -58,6 +85,7 @@ export function hostToAgency(host) {
     logoPath: logoPaths[validAgencyName],
     heroPath: heroPath[validAgencyName],
     favIconPath: faviconpaths[validAgencyName],
+    heroTxts: heroTxtsLabels[validAgencyName],
   };
 }
 const useAgencyFromSubdomain = () => {

@@ -14,7 +14,7 @@ import useAgencyFromSubdomain from "@/components/hooks/useSubdomainToAgency";
 
 //@TODO switch backclass for mobile
 // @TODO image scale on resize
-export function Hero() {
+export function Hero({ heroTxts }) {
   const { agency, heroPath } = useAgencyFromSubdomain();
 
   return (
@@ -40,7 +40,7 @@ export function Hero() {
           <Title type="title2" className={styles.heromobiletxt} tag="h1">
             {Translate({
               context: "general",
-              label: "heroTxt",
+              label: heroTxts["heroTxt"],
             })}
           </Title>
 
@@ -51,13 +51,13 @@ export function Hero() {
           <Title type="title2" className={styles.herotitle} tag="h1">
             {Translate({
               context: "general",
-              label: "heroTxt",
+              label: heroTxts["heroTxt"],
             })}
           </Title>
           <Text type="text2" className={styles.herobluetxt}>
             {Translate({
               context: "general",
-              label: "readMore",
+              label: heroTxts["readMore"],
             })}
           </Text>
         </div>
@@ -94,5 +94,6 @@ export function parseHero(data) {
 }
 
 export default function Wrap() {
-  return <Hero />;
+  const { heroTxts } = useAgencyFromSubdomain();
+  return <Hero heroTxts={heroTxts} />;
 }

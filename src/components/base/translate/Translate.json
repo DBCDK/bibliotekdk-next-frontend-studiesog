@@ -579,6 +579,54 @@
         "da": "Gå til indhold",
         "en": "Skip to content"
       },
+      "odenseHeroTxt": {
+        "da": "Biblioteksbasen",
+        "en": "Library base"
+      },
+      "odenseReadMore": {
+        "da": "Søg i skolens bøger, artikler, Infomedia, film, Faktalink, e-bøger og meget mere.",
+        "en": "Search the school's books, articles, Infomedia, films, Faktalink, e-books, and much more."
+      },
+      "soroeakademiHeroTxt": {
+        "da": "StudieSøg",
+        "en": "StudieSøg"
+      },
+      "soroeakademiReadMore": {
+        "da": "Din indgang til let at søge efter skolens bøger, artikler og gymnasierelevante kilder ét sted.",
+        "en": "Your gateway to easily search for the school's books, articles, and high school-relevant resources in one place."
+      },
+      "slagelseHeroTxt": {
+        "da": "StudieSøg",
+        "en": "StudieSøg"
+      },
+      "slagelseReadMore": {
+        "da": "Din indgang til let at søge efter skolens bøger, artikler og gymnasierelevante kilder ét sted.",
+        "en": "Your gateway to easily search for the school's books, articles, and high school-relevant resources in one place."
+      },
+      "greveHeroTxt": {
+        "da": "Biblioteksbasen",
+        "en": "Library base"
+      },
+      "greveReadMore": {
+        "da": "Søg bøger og artikler fra Greve Gymnasiums bibliotek og se, hvornår du skal aflevere bøger",
+        "en": "Search books and articles from Greve Gymnasium's library and see when you need to return books."
+      },
+      "stenhusHeroTxt": {
+        "da": "Bib.systemet",
+        "en": "Bib.system"
+      },
+      "stenhusReadMore": {
+        "da": "Se Stenhus Gymnasiums fysiske og online materialer, og se, hvornår du skal aflevere bøger",
+        "en": "See Stenhus Gymnasium's physical and online materials, and check when you need to return books."
+      },
+      "roskildeHeroTxt": {
+        "da": "Bib.systemet",
+        "en": "Bib.system"
+      },
+      "roskildeReadMore": {
+        "da": "Søg i skolens bøger, artikler, Infomedia, film, Faktalink, e-bøger og meget mere.",
+        "en": "Search the school's books, articles, Infomedia, films, Faktalink, e-books, and much more."
+      },
       "heroTxt": {
         "da": "Biblioteksbasen",
         "en": "Library base"
