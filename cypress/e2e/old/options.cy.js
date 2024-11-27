@@ -5,7 +5,7 @@
 describe("Overview", () => {
   it(`All option links present`, () => {
     cy.visit("/iframe.html?id=modal-options--all-options");
-    cy.contains("Alle bestillingsmuligheder (3)", { timeout: 15000 }).click();
+    cy.contains("Alle bestillingsmuligheder (4)", { timeout: 15000 }).click();
 
     cy.contains("Alle bestillingsmuligheder", { timeout: 15000 }).should(
       "exist"

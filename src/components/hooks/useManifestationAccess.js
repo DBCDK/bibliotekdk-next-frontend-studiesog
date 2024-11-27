@@ -205,9 +205,8 @@ export function useManifestationAccess({ pids, filter }) {
         (acc) => acc.__typename !== AccessEnum.INTER_LIBRARY_LOAN
       );
     }
-
     //  finally - if user is authenticated has no rights we remove digital access
-    const userHasDigitalAccess = userRights?.rights?.digitalArticleService;
+    const userHasDigitalAccess = userRights?.digitalArticleService;
     if (isAuthenticated && !userHasDigitalAccess) {
       access = access?.filter(
         (acc) => acc.__typename !== AccessEnum.DIGITAL_ARTICLE_SERVICE
