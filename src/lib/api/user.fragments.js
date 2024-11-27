@@ -13,6 +13,29 @@ import {
  */
 
 /**
+ * access rights for  user
+ */
+export function userRights() {
+  return {
+    apiUrl: ApiEnums.FBI_API,
+    // delay: 1000, // for debugging
+    query: `
+    query UserRights {
+      user {
+        rights {
+          infomedia 
+          digitalArticleService 
+          demandDrivenAcquisition
+       }
+      }
+       }`,
+    variables: {},
+    slowThreshold: 3000,
+    revalidate: true,
+  };
+}
+
+/**
  * Basic user info
  *
  */

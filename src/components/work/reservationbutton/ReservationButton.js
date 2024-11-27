@@ -68,6 +68,7 @@ function ReservationButtonWrapper({
   const { agency } = useAgencyFromSubdomain();
   const {
     access,
+
     hasPhysicalCopy,
     hasDigitalCopy,
     isLoading: isLoadingAccess,
@@ -192,6 +193,10 @@ export const ReservationButton = ({
       (acc) => acc.__typename === AccessEnum.DIGITAL_ARTICLE_SERVICE
     );
 
+    const hasILL = access.find(
+      (acc) => acc.__typename === AccessEnum.INTER_LIBRARY_LOAN
+    );
+
     // is this an access url ?
     const onlineAccessUrl = Boolean(
       access?.filter((entry) => entry?.url && entry?.origin !== "www.dfi.dk")
@@ -242,7 +247,7 @@ export const ReservationButton = ({
       label: "bestil",
     });
     // if pickup is allowed (ill)
-    if (agency.pickupAllowed) {
+    if (agency.pickupAllowed && hasILL) {
       return {
         props: loginRequiredProps,
         text: loginRequiredText,
@@ -250,6 +255,7 @@ export const ReservationButton = ({
       };
     }
 
+    // last chance - check if there is a lookupurl to look up in cicero surf
     const lookupUrl = branch?.holdings?.lookupUrl;
     if (lookupUrl) {
       return {
@@ -264,7 +270,7 @@ export const ReservationButton = ({
       };
     }
 
-    // if pickup is NOT allowed - default
+    // if pickup is NOT allowed and no other access - default .. we give up
     return {
       props: {
         dataCy: "button-order-no-localizations-disabled",

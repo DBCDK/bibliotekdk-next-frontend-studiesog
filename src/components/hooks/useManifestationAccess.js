@@ -2,10 +2,11 @@ import { useData } from "@/lib/api/api";
 import { accessForManifestations } from "@/lib/api/access.fragments";
 import { AccessEnum } from "@/lib/enums";
 import { useMemo } from "react";
-import useLoanerInfo from "./user/useLoanerInfo";
+// import useLoanerInfo from "./user/useLoanerInfo";
 import { encodeTitleCreator, infomediaUrl } from "@/lib/utils";
 import useAuthentication from "@/components/hooks/user/useAuthentication";
 import useSubdomainToAgency from "@/components/hooks/useSubdomainToAgency";
+import useRights from "@/components/hooks/user/useRights";
 
 /**
  * Sorting entries of the access array
@@ -145,7 +146,7 @@ function flattenAccess(manifestations) {
  * a list of objects of how they can be accessed
  */
 export function useManifestationAccess({ pids, filter }) {
-  const { loanerInfo, isLoading: loanerInfoIsLoading } = useLoanerInfo();
+  const { rights: userRights, isLoading: rightIsLoading } = useRights();
   const { isAuthenticated } = useAuthentication();
   // we need the agency to check if pickup is allowed (ill)
   const { agency } = useSubdomainToAgency();
@@ -157,7 +158,7 @@ export function useManifestationAccess({ pids, filter }) {
 
   // Generate the result only when data changes
   const res = useMemo(() => {
-    if (accessIsLoading || loanerInfoIsLoading || !data) {
+    if (accessIsLoading || rightIsLoading || !data) {
       return {};
     }
 
@@ -170,6 +171,9 @@ export function useManifestationAccess({ pids, filter }) {
       }
     );
 
+    // so .. here we have all the accesses - the rest is application specific stuff
+    // this is studiesøg - we only allow orders for materials with digital access
+
     // sort & filter - we only want access of type RESOURCE AND we do not want broken links
     let access = sortAccessArray(flattenedAccess)?.filter((singleAccess) => {
       return (
@@ -179,8 +183,8 @@ export function useManifestationAccess({ pids, filter }) {
           singleAccess?.status === "OK")
       );
     });
-    // we also filter out the ill option - this page does not support inter library loans
-    // well .. some libraries does
+
+    // if agency does not allow pickup we remove all ill
     if (!agency.pickupAllowed) {
       access = access.filter(
         (singleAccess) =>
@@ -188,29 +192,27 @@ export function useManifestationAccess({ pids, filter }) {
       );
     }
 
+    // we need the accessmap to check all accesses for types
     const accessMap = {};
     access.forEach((entry) => (accessMap[entry.__typename] = entry));
 
-    const userHasDigitalAccess =
-      !!loanerInfo?.rights?.["digitalArticleService"];
-
-    // we filter out digital access if user is authenticated AND has no right
-    if (isAuthenticated && !userHasDigitalAccess) {
-      access = access?.filter(
-        (acc) => acc.__typename !== AccessEnum.DIGITAL_ARTICLE_SERVICE
-      );
-    }
-    // if there is both digital AND physical access AND user has digital access we filter out the physical
+    // if there is NOT digital access AND ILL access we remove ill - we only allow orders for digital access :)
     if (
-      accessMap?.[AccessEnum.DIGITAL_ARTICLE_SERVICE] &&
-      accessMap?.[AccessEnum.INTER_LIBRARY_LOAN] &&
-      userHasDigitalAccess
+      !accessMap?.[AccessEnum.DIGITAL_ARTICLE_SERVICE] &&
+      accessMap?.[AccessEnum.INTER_LIBRARY_LOAN]
     ) {
       access = access?.filter(
         (acc) => acc.__typename !== AccessEnum.INTER_LIBRARY_LOAN
       );
     }
 
+    //  finally - if user is authenticated has no rights we remove digital access
+    const userHasDigitalAccess = userRights?.rights?.digitalArticleService;
+    if (isAuthenticated && !userHasDigitalAccess) {
+      access = access?.filter(
+        (acc) => acc.__typename !== AccessEnum.DIGITAL_ARTICLE_SERVICE
+      );
+    }
     let workTypesMap = {};
     data?.manifestations?.forEach((m) =>
       m?.workTypes?.forEach((workType) => (workTypesMap[workType] = true))
@@ -220,7 +222,7 @@ export function useManifestationAccess({ pids, filter }) {
       access,
       accessMap,
     };
-  }, [data, loanerInfo]);
+  }, [data, userRights]);
 
   const hasDigitalCopy = !!res?.accessMap?.[AccessEnum.DIGITAL_ARTICLE_SERVICE];
   const hasPhysicalCopy = !!res?.accessMap?.[AccessEnum.INTER_LIBRARY_LOAN];
@@ -233,6 +235,6 @@ export function useManifestationAccess({ pids, filter }) {
     physicalCopyPids:
       res?.accessMap?.[AccessEnum.INTER_LIBRARY_LOAN]?.pids || [],
     supportsOrderFlow: hasDigitalCopy || hasPhysicalCopy,
-    isLoading: loanerInfoIsLoading || accessIsLoading,
+    isLoading: rightIsLoading || accessIsLoading,
   };
 }
