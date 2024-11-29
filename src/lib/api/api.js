@@ -270,8 +270,6 @@ function useFetcherImpl() {
   // @TODO .. we just need the agencyId here .. not entire branch
   const { branchId } = useSubDomainToBrancId();
 
-  // console.log(branchId, "BRANCHID");
-
   const { fetcher: mockedFetcher } = useContext(APIMockContext) || {};
   if (mockedFetcher) {
     const stackTrace = getStackTrace();
