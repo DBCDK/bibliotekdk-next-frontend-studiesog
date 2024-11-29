@@ -1,4 +1,4 @@
-import { hostToAgency } from "@/components/hooks/useSubdomainToAgency";
+import { hostToAgency } from "@/components/utils/hostToAagency";
 import { generateKey, fetcher } from "@/lib/api/api";
 import { getServerSession } from "@dbcdk/login-nextjs/server";
 
