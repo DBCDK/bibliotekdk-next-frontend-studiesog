@@ -9,7 +9,7 @@ import getConfig from "next/config";
 import useSWR from "swr";
 import useAccessToken from "@/components/hooks/user/useAccessToken";
 import useCookieConsent from "@/components/hooks/useCookieConsent";
-import useAgencyFromSubdomain from "@/components/hooks/useSubdomainToAgency";
+import { useSubDomainToBrancId } from "@/components/hooks/useSubDomainToBrancId";
 
 // TODO handle config better
 const nextJsConfig = getConfig();
@@ -58,7 +58,7 @@ export async function fetcher(
     accessToken,
   } = typeof queryStr === "string" ? JSON.parse(queryStr) : queryStr;
 
-  const { uniqueVisitorId, statistics, agencyId } = extra;
+  const { uniqueVisitorId, statistics, branchId } = extra;
 
   // Calculate apiUrl
   const apiUrl =
@@ -87,7 +87,7 @@ export async function fetcher(
 
   const start = Date.now();
   const res = await fetch(
-    `${rootUrl}/${agencyId ? `${agencyId}/` : ""}StudieSoeg/graphql`,
+    `${rootUrl}/${branchId ? `${branchId}/` : ""}StudieSoeg/graphql`,
     {
       method: "POST",
       headers,
@@ -266,14 +266,19 @@ function getStackTrace() {
  */
 function useFetcherImpl() {
   const consent = useCookieConsent();
-  const { agency } = useAgencyFromSubdomain();
+
+  // @TODO .. we just need the agencyId here .. not entire branch
+  const { branchId } = useSubDomainToBrancId();
+
+  // console.log(branchId, "BRANCHID");
+
   const { fetcher: mockedFetcher } = useContext(APIMockContext) || {};
   if (mockedFetcher) {
     const stackTrace = getStackTrace();
     return (queryStr) => mockedFetcher(queryStr, stackTrace);
   }
 
-  return (key) => fetcher(key, null, null, { ...consent, ...agency });
+  return (key) => fetcher(key, null, null, { ...consent, branchId: branchId });
 }
 
 /**

@@ -30,7 +30,7 @@ import { workIdToTitleCreator } from "@/lib/api/work.fragments";
 import { encodeTitleCreator } from "@/lib/utils";
 import { fetcher } from "@/lib/api/api";
 import { getServerSession } from "@dbcdk/login-nextjs/server";
-import { hostToAgency } from "@/components/hooks/useSubdomainToAgency";
+import { hostToAgency } from "@/components/utils/hostToAagency";
 
 /**
  * Renders the WorkPage component
@@ -146,6 +146,8 @@ function extractFixedUrl(queryRes, ctx) {
 WorkPage.getInitialProps = async (ctx) => {
   const init = await fetchAll(serverQueries, ctx);
   const queries = Object.values(init.initialData);
+
+  // TODO x-forwarded-host is full hostname
   const { agency } = hostToAgency(ctx.req?.headers?.["x-forwarded-host"]);
 
   // user session
