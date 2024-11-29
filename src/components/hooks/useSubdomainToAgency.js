@@ -9,6 +9,7 @@ export const PagePropsContext = createContext(null);
 const useAgencyFromSubdomain = () => {
   const { host } = useContext(PagePropsContext) || {};
   const options = hostToAgency(host);
+
   const branchInfo = useBranchInfo({ branchId: options.agency.branchId });
   const mergedAgency = { ...branchInfo, ...options.agency };
 
@@ -19,7 +20,7 @@ const useAgencyFromSubdomain = () => {
       signIn(
         "adgangsplatformen",
         {},
-        { agency: options?.agency?.agencyId, force_login: 1 }
+        { agency: options?.agency?.branchId, force_login: 1 }
       ),
   };
 };
