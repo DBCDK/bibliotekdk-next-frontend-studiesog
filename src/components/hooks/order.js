@@ -630,8 +630,6 @@ export function useMultiOrderValidation({ orders }) {
     [result]
   );
 
-  console.log(result, "VALIDATION RESULT");
-
   return {
     ...validation,
     isLoading,
