@@ -320,6 +320,7 @@ export function holdingsForAgency({ agencyId, pids }) {
               subLocation
             }
             lookupUrl
+            lookupUrls
           }
           branchPhone
           branchEmail

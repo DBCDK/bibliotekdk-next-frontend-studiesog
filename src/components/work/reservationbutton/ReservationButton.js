@@ -185,6 +185,7 @@ export const ReservationButton = ({
   pids,
 }) => {
   access = sortEreolFirst(access);
+
   const { start } = useOrderFlow();
   // this is studiesøg - we always have an agency :)
   const { agency } = useAgencyFromSubdomain();
@@ -257,7 +258,17 @@ export const ReservationButton = ({
     }
 
     // last chance - check if there is a lookupurl to look up in cicero surf
-    const lookupUrl = branch?.holdings?.lookupUrl;
+    // we need the local identifier to find the lookup url
+    // we use the first pid in array - they have been sorted with newest first :)
+    // we use branch.lookupUrl as fallback or set it to null if all fails
+    const localIdentifier = pids[0].split(":")[1];
+    const lookupUrl =
+      branch?.holdings?.lookupUrls?.find((lookup) =>
+        lookup?.endsWith(localIdentifier)
+      ) ||
+      branch?.holdings?.lookupUrl ||
+      null;
+
     if (lookupUrl) {
       return {
         props: {

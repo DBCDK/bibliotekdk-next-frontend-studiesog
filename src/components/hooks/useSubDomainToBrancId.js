@@ -19,9 +19,9 @@ export function useSubDomainToBrancId() {
 
   const validAgencyName = agencyNames.includes(agencyName)
     ? agencyName
-    : "stenhus";
+    : "soroeakademi";
 
   const agency = gymAgencies[validAgencyName];
-  // console.log(agency, "agency");
+
   return { agency, branchId: agency.branchId };
 }
