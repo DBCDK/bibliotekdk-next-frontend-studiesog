@@ -931,6 +931,10 @@ export function overviewWork({ workId }) {
             }
             publisher
             edition {
+              publicationYear {
+                display
+                year
+              }
               summary
               edition
             }
