@@ -33,6 +33,7 @@ import ExternalSvg from "@/public/icons/external_small.svg";
 import animations from "@/components/base/animation/animations.module.css";
 import styles from "./order.module.css";
 import useSubdomainToAgency from "@/components/hooks/useSubdomainToAgency";
+import useRights from "@/components/hooks/user/useRights";
 
 /**
  * Retrieves periodica information for a list of pids
@@ -99,7 +100,7 @@ export function useOrderService({ pids }) {
     pids,
   });
 
-  const { loanerInfo, isLoading: userIsLoading } = useLoanerInfo();
+  const { rights, isLoading: userIsLoading } = useRights();
 
   const {
     isPeriodica,
@@ -112,12 +113,13 @@ export function useOrderService({ pids }) {
   let pidsToUse = [];
   if (
     digitalCopyPids?.length > 0 &&
-    loanerInfo?.rights?.digitalArticleService &&
+    rights?.digitalArticleService &&
     (!isPeriodica || (isPeriodica && articleIsSpecified))
   ) {
     service = "DIGITAL_ARTICLE";
     pidsToUse = digitalCopyPids;
-  } else if (physicalCopyPids?.length > 0 && policy?.physicalCopyAllowed) {
+    // } else if (physicalCopyPids?.length > 0 && policy?.physicalCopyAllowed) {
+  } else if (physicalCopyPids?.length > 0 && agency?.pickupAllowed) {
     service = "ILL";
     pidsToUse = physicalCopyPids;
   }
