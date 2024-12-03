@@ -20,7 +20,7 @@ const useAgencyFromSubdomain = () => {
       signIn(
         "adgangsplatformen",
         {},
-        { agency: options?.agency?.branchId, force_login: 1 }
+        { agency: mergedAgency?.agencyId, force_login: 1 }
       ),
   };
 };
