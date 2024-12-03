@@ -12,11 +12,11 @@ import useAuthentication from "@/components/hooks/user/useAuthentication";
 import {
   useMultiOrderValidation,
   useOrderFlow,
-  usePickupBranchId,
   useSubmitOrders,
 } from "@/components/hooks/order";
-import { useBranchInfo } from "@/components/hooks/useBranchInfo";
+
 import { useModal } from "@/components/_modal/Modal";
+import useAgencyFromSubdomain from "@/components/hooks/useSubdomainToAgency";
 
 const CheckoutForm = () => {
   const { orders } = useOrderFlow();
@@ -39,12 +39,14 @@ const CheckoutForm = () => {
 
   const { hasCulrUniqueId } = useAuthentication();
   const disabled = !isValid;
-  const { branchId } = usePickupBranchId();
-  const pickupBranch = useBranchInfo({ branchId });
+
+  const agencyInfo = useAgencyFromSubdomain();
+  const pickupBranch = agencyInfo?.agency;
   const { submitOrders, isSubmitting } = useSubmitOrders({
     orders,
   });
 
+  const isLoadingPickupBranch = pickupBranch?.isLoading;
   const libraryClosed = pickupBranch?.temporarilyClosed;
 
   const hasPhysicalOrders = physicalMaterialsCount > 0;
@@ -70,108 +72,122 @@ const CheckoutForm = () => {
       <OrdererInformation />
       {libraryClosed && (
         <Text type="text3" className={styles.closedreason}>
-          {pickupBranch?.temporarilyClosedReason}
+          {pickupBranch?.temporarilyClosedReason ||
+            "Biblioteket er midlertidigt lukket"}
         </Text>
       )}
       <Pincode />
       <div>
         {/* Errors and messages */}
 
-        {!isLoadingValidation && materialsNotAllowedCount > 0 && (
-          <Text type="text3" className={styles.errorLabel}>
-            <Translate
-              context="bookmark-order"
-              label={
-                materialsNotAllowedCount === 1
-                  ? "multiorder-cant-order-singular"
-                  : "multiorder-cant-order"
-              }
-              vars={[materialsNotAllowedCount]}
-            />
-          </Text>
-        )}
+        {!isLoadingValidation &&
+          !isLoadingPickupBranch &&
+          materialsNotAllowedCount > 0 && (
+            <Text type="text3" className={styles.errorLabel}>
+              <Translate
+                context="bookmark-order"
+                label={
+                  materialsNotAllowedCount === 1
+                    ? "multiorder-cant-order-singular"
+                    : "multiorder-cant-order"
+                }
+                vars={[materialsNotAllowedCount]}
+              />
+            </Text>
+          )}
 
-        {!isLoadingValidation && materialsMissingActionCount > 0 && (
-          <Text type="text3" className={styles.errorLabel}>
-            <Translate
-              context="bookmark-order"
-              label={
-                materialsMissingActionCount === 1
-                  ? "multiorder-missing-info-singular"
-                  : "multiorder-missing-info"
-              }
-              vars={[materialsMissingActionCount]}
-            />
-          </Text>
-        )}
+        {!isLoadingValidation &&
+          !isLoadingPickupBranch &&
+          materialsMissingActionCount > 0 && (
+            <Text type="text3" className={styles.errorLabel}>
+              <Translate
+                context="bookmark-order"
+                label={
+                  materialsMissingActionCount === 1
+                    ? "multiorder-missing-info-singular"
+                    : "multiorder-missing-info"
+                }
+                vars={[materialsMissingActionCount]}
+              />
+            </Text>
+          )}
 
-        {!isLoadingValidation && noLocation && (
+        {!isLoadingValidation && !isLoadingPickupBranch && noLocation && (
           <Text type="text3" className={styles.errorLabel}>
             <Translate context="order" label="no-locations-disable" />
           </Text>
         )}
 
-        {!isLoadingValidation && missingMail && (
+        {!isLoadingValidation && !isLoadingPickupBranch && missingMail && (
           <Text type="text3" className={styles.errorLabel}>
             <Translate context="order" label="action-empty-email-field" />
           </Text>
         )}
 
-        {!isLoadingValidation && missingPincode && (
+        {!isLoadingValidation && !isLoadingPickupBranch && missingPincode && (
           <Text type="text3" className={styles.errorLabel}>
             <Translate context="order" label="action-missing-pincode" />
           </Text>
         )}
 
-        {!isLoadingValidation && missingMobileLibrary && (
-          <Text type="text3" className={styles.errorLabel}>
-            <Translate context="order" label="action-missing-mobile-library" />
-          </Text>
-        )}
-
-        {!isLoadingValidation && alreadyOrdered?.length > 0 && (
-          <Text type="text3" className={styles.errorLabel}>
-            <Translate
-              context="bookmark-order"
-              label={
-                alreadyOrdered?.length === 1
-                  ? "multiorder-duplicate-order-singular"
-                  : "multiorder-duplicate-order"
-              }
-              vars={[alreadyOrdered?.length]}
-            />{" "}
-            <Link
-              onClick={scrollToWorkId}
-              scroll={true}
-              className={styles.chooseOrderAgain}
-              border={{ top: false, bottom: { keepVisible: true } }}
-            >
-              {" "}
+        {!isLoadingValidation &&
+          !isLoadingPickupBranch &&
+          missingMobileLibrary && (
+            <Text type="text3" className={styles.errorLabel}>
               <Translate
                 context="order"
+                label="action-missing-mobile-library"
+              />
+            </Text>
+          )}
+
+        {!isLoadingValidation &&
+          !isLoadingPickupBranch &&
+          alreadyOrdered?.length > 0 && (
+            <Text type="text3" className={styles.errorLabel}>
+              <Translate
+                context="bookmark-order"
                 label={
                   alreadyOrdered?.length === 1
-                    ? "choose-order-again"
-                    : "choose-order-again-plural"
+                    ? "multiorder-duplicate-order-singular"
+                    : "multiorder-duplicate-order"
                 }
-              />
-            </Link>
-          </Text>
-        )}
+                vars={[alreadyOrdered?.length]}
+              />{" "}
+              <Link
+                onClick={scrollToWorkId}
+                scroll={true}
+                className={styles.chooseOrderAgain}
+                border={{ top: false, bottom: { keepVisible: true } }}
+              >
+                {" "}
+                <Translate
+                  context="order"
+                  label={
+                    alreadyOrdered?.length === 1
+                      ? "choose-order-again"
+                      : "choose-order-again-plural"
+                  }
+                />
+              </Link>
+            </Text>
+          )}
 
-        {!isLoadingValidation && digitalMaterialsCount > 0 && (
-          <Text type="text3" className={styles.formLabel}>
-            <Translate
-              context="bookmark-order"
-              label={
-                digitalMaterialsCount === 1
-                  ? "multiorder-digital-copy-singular"
-                  : "multiorder-digital-copy"
-              }
-              vars={[digitalMaterialsCount]}
-            />
-          </Text>
-        )}
+        {!isLoadingValidation &&
+          !isLoadingPickupBranch &&
+          digitalMaterialsCount > 0 && (
+            <Text type="text3" className={styles.formLabel}>
+              <Translate
+                context="bookmark-order"
+                label={
+                  digitalMaterialsCount === 1
+                    ? "multiorder-digital-copy-singular"
+                    : "multiorder-digital-copy"
+                }
+                vars={[digitalMaterialsCount]}
+              />
+            </Text>
+          )}
 
         {!isLoadingValidation && hasPhysicalOrders && !libraryClosed && (
           <Text type="text3" className={styles.formLabel}>
