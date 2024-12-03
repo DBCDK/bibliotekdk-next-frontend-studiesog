@@ -20,12 +20,14 @@
   "stenhus": {
     "branchId": "875140",
 
+    "temporarilyClosed": false,
     "branchEmail": "mr@stenhus-gym.dk",
     "branchPhone": "50 91 11 09"
   },
   "odense": {
     "branchId": "872960",
 
+    "temporarilyClosed": false,
     "branchEmail": "biblioteket@odensekatedralskole.dk",
     "branchPhone": "66 12 22 40"
   },
