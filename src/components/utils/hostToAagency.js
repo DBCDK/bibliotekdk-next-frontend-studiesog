@@ -68,7 +68,7 @@ export function hostToAgency(host) {
 
   const validAgencyName = agencyNames.includes(agencyName)
     ? agencyName
-    : "slagelse";
+    : "odense";
 
   const agency = gymAgencies[validAgencyName];
 

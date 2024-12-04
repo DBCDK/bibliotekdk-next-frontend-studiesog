@@ -61,7 +61,13 @@ const SecondColumn = () => {
         <Text type="text3">
           {agency?.city} {agency?.postalCode}
         </Text>
+        {agency?.contactPerson && (
+          <Text type="text3">{agency?.contactPerson}</Text>
+        )}
         <Text type="text3">{agency?.branchEmail}</Text>
+        {agency?.alternativeContact && (
+          <Text type="text3">{agency?.alternativeContact}</Text>
+        )}
         <Text type="text3">{agency?.branchPhone}</Text>
       </div>
       <ContactLinks />

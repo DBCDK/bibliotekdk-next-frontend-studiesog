@@ -19,7 +19,7 @@ export function useSubDomainToBrancId() {
 
   const validAgencyName = agencyNames.includes(agencyName)
     ? agencyName
-    : "slagelse";
+    : "odense";
 
   const agency = gymAgencies[validAgencyName];
 

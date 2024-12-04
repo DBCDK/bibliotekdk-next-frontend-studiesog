@@ -8,18 +8,22 @@
   "greve": {
     "branchId": "874260",
 
-    "branchEmail": "GGbibliotek@greve-gym.dk",
+    "alternativeContact": "lectio: cbh",
+    "contactPerson": "Cæcilie Berg Heising",
+    "branchEmail": "ggcbh@greve-gym.dk",
     "branchPhone": "43972030"
   },
   "slagelse": {
     "branchId": "872320",
 
-    "branchEmail": "ol@slagelse-gym.dk",
+    "branchEmail": "bibliotek@slagelse-gym.dk",
     "branchPhone": "58555959"
   },
   "stenhus": {
     "branchId": "875140",
 
+    "alternativeContact": "lectio",
+    "contactPerson": "Marianne Bech Hansen",
     "temporarilyClosed": false,
     "branchEmail": "mr@stenhus-gym.dk",
     "branchPhone": "50 91 11 09"
