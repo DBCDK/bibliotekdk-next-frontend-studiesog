@@ -1,13 +1,13 @@
 {
   "roskilde": {
     "branchId": "872600",
-
+    "agencyId": "872600",
     "branchEmail": "RGBiblioteket@roskilde-gym.dk",
     "branchPhone": "46 30 87 18"
   },
   "greve": {
     "branchId": "874260",
-
+    "agencyId": "874260",
     "alternativeContact": "lectio: cbh",
     "contactPerson": "Cæcilie Berg Heising",
     "branchEmail": "ggcbh@greve-gym.dk",
@@ -15,12 +15,14 @@
   },
   "slagelse": {
     "branchId": "872320",
+    "agencyId": "872320",
 
     "branchEmail": "bibliotek@slagelse-gym.dk",
     "branchPhone": "58555959"
   },
   "stenhus": {
     "branchId": "875140",
+    "agencyId": "875140",
 
     "alternativeContact": "lectio",
     "contactPerson": "Marianne Bech Hansen",
@@ -30,6 +32,7 @@
   },
   "odense": {
     "branchId": "872960",
+    "agencyId": "872960",
 
     "temporarilyClosed": false,
     "branchEmail": "biblioteket@odensekatedralskole.dk",
@@ -37,6 +40,7 @@
   },
   "soroeakademi": {
     "branchId": "861640",
+    "agencyId": "861640",
 
     "branchEmail": "biblioteket@soroeakademi.dk",
     "branchPhone": "57 86 57 94"
