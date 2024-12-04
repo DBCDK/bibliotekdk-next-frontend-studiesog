@@ -34,6 +34,7 @@ import animations from "@/components/base/animation/animations.module.css";
 import styles from "./order.module.css";
 import useSubdomainToAgency from "@/components/hooks/useSubdomainToAgency";
 import useRights from "@/components/hooks/user/useRights";
+import useAgencies from "@/components/hooks/user/useAgencies";
 
 /**
  * Retrieves periodica information for a list of pids
@@ -95,10 +96,10 @@ export function useOrderService({ pids }) {
   });
 
   // @TODO .. is this necessary .. maybe agency.pickupAllowed is enough
-  const policy = useOrderPolicy({
-    branchId,
-    pids,
-  });
+  // const policy = useOrderPolicy({
+  //   branchId,
+  //   pids,
+  // });
 
   const { rights, isLoading: userIsLoading } = useRights();
 
@@ -124,8 +125,7 @@ export function useOrderService({ pids }) {
     pidsToUse = physicalCopyPids;
   }
 
-  const isLoading =
-    accessIsLoading || userIsLoading || isLoadingPeriodica || policy.isLoading;
+  const isLoading = accessIsLoading || userIsLoading || isLoadingPeriodica;
 
   return {
     service: !isLoading && service,
@@ -280,17 +280,23 @@ export function usePeriodicaForm(periodicaFormKey = "default") {
 /**
  * Returns the selected pickup branch
  */
+
+/**** we try to make this one more lightweight
+ pickupBranch,
+ municipalityAgencyId
+ agencies
+ **/
 export function usePickupBranchId() {
   const { hasCulrUniqueId, isLoading: authIsLoading } = useAuthentication();
 
-  const { loanerInfo, isLoading: loanerInfoIsLoading } = useLoanerInfo();
+  const loanerInfo = useAgencies();
 
   const { data: extendedUserData, isLoading: isLoadingExtendedData } = useData(
     hasCulrUniqueId && extendedData()
   );
 
   const isLoading =
-    authIsLoading || loanerInfoIsLoading || isLoadingExtendedData;
+    authIsLoading || loanerInfo.isLoading || isLoadingExtendedData;
 
   const branchId =
     loanerInfo?.pickupBranch ||
