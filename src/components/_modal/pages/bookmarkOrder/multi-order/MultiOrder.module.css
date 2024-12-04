@@ -11,6 +11,11 @@
   margin-bottom: var(--pt3);
 }
 
+.skeleton {
+  line-height: var(--pt1);
+  padding: var(--pt3);
+}
+
 .materialList {
   margin: 0 -48px;
 }

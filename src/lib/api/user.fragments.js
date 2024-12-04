@@ -36,6 +36,31 @@ export function userRights() {
 }
 
 /**
+ * Get the users agencies - short for counting eg.
+ *
+ */
+export function userAgencies() {
+  return {
+    apiUrl: ApiEnums.FBI_API,
+    // delay: 1000, // for debugging
+    query: `
+    query UserAgencies {
+      user {
+          agencies {
+            id
+            name
+            type
+            hitcount
+          }
+        }
+       }`,
+    variables: {},
+    slowThreshold: 3000,
+    revalidate: true,
+  };
+}
+
+/**
  * Basic user info
  *
  */

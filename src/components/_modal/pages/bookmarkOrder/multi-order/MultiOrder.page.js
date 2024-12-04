@@ -12,6 +12,8 @@ import {
   useMultiOrderValidation,
   useOrderFlow,
 } from "@/components/hooks/order";
+import useAgencies from "@/components/hooks/user/useAgencies";
+import Skeleton from "@/components/base/skeleton";
 
 const CONTEXT = "bookmark-order";
 
@@ -21,18 +23,22 @@ const MultiOrder = () => {
   const { identityProviderUsed, isLoading: isLoadingAuthentication } =
     useAuthentication();
 
-  const { loanerInfo, isLoading: isLoadingLoanerInfo } = useLoanerInfo();
+  const { agencies: userAgencies, isLoading: isLoadingAgencies } =
+    useAgencies();
   const { physicalMaterialsCount } = useMultiOrderValidation({
     orders,
   });
 
-  if (isLoadingAuthentication || isLoadingLoanerInfo) {
-    // TODO spinner?
-    return null;
+  if (isLoadingAuthentication || isLoadingAgencies) {
+    return (
+      <Skeleton lines={10} className={styles.skeleton}>
+        <div>loading</div>
+      </Skeleton>
+    );
   }
   if (
     identityProviderUsed === "nemlogin" &&
-    loanerInfo?.agencies?.length === 0
+    userAgencies?.agencies?.length === 0
   ) {
     return <NoAgenciesError />;
   }
