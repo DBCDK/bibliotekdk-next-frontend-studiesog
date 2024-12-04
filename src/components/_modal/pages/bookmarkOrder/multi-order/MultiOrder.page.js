@@ -4,7 +4,6 @@ import styles from "./MultiOrder.module.css";
 import Translate from "@/components/base/translate";
 import CheckoutForm from "./checkoutForm/MultiOrderCheckoutForm";
 import Material from "./Material/Material";
-import useLoanerInfo from "@/components/hooks/user/useLoanerInfo";
 import BlockedUserInformation from "@/components/_modal/pages/order/blockeduserinformation/BlockedUserInformation";
 import useAuthentication from "@/components/hooks/user/useAuthentication";
 import NoAgenciesError from "../../order/noAgencies/NoAgenciesError";
