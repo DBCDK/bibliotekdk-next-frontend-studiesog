@@ -24,11 +24,12 @@
     "branchId": "875140",
     "agencyId": "875140",
 
-    "alternativeContact": "lectio",
+    "postalAddress": null,
+    "postalCode": null,
+    "alternativeContact": "(eller via lectio)",
     "contactPerson": "Marianne Bech Hansen",
     "temporarilyClosed": false,
-    "branchEmail": "mr@stenhus-gym.dk",
-    "branchPhone": "50 91 11 09"
+    "branchEmail": "mr@stenhus-gym.dk"
   },
   "odense": {
     "branchId": "872960",

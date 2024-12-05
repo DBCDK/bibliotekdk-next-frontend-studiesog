@@ -57,10 +57,14 @@ const SecondColumn = () => {
       <div className={styles.spacer}></div>
       <div className={styles.contactContainer}>
         <Text type="text3">{agency?.agencyName}</Text>
-        <Text type="text3">{agency?.postalAddress}</Text>
-        <Text type="text3">
-          {agency?.city} {agency?.postalCode}
-        </Text>
+        {agency?.postalAddress && (
+          <Text type="text3">{agency?.postalAddress}</Text>
+        )}
+        {agency?.postalCode && (
+          <Text type="text3">
+            {agency?.city} {agency?.postalCode}
+          </Text>
+        )}
         {agency?.contactPerson && (
           <Text type="text3">{agency?.contactPerson}</Text>
         )}
@@ -68,7 +72,7 @@ const SecondColumn = () => {
         {agency?.alternativeContact && (
           <Text type="text3">{agency?.alternativeContact}</Text>
         )}
-        <Text type="text3">{agency?.branchPhone}</Text>
+        {agency?.branchPhone && <Text type="text3">{agency?.branchPhone}</Text>}
       </div>
       <ContactLinks />
       <Link
