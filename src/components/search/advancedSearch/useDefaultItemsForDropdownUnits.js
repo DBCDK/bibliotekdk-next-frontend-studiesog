@@ -1,7 +1,7 @@
 import {
   agesFormatterAndComparitor,
   agesIndices,
-  dummy__nota,
+  //dummy__nota,
   dummy__pegi,
   publicationYearFormatterAndComparitor,
   publicationYearIndices,
@@ -500,12 +500,12 @@ export function useDefaultItemsForDropdownUnits({ initDropdowns }, workType) {
     showSearchBar: false,
   };
 
-  const nota = {
-    items: convertToDropdownInput(dummy__nota()),
-    indexName: DropdownIndicesEnum.NOTA,
-    showSearchBar: false,
-    infoBarLabel: "tooltip_nota_info",
-  };
+  // const nota = {
+  //   items: convertToDropdownInput(dummy__nota()),
+  //   indexName: DropdownIndicesEnum.NOTA,
+  //   showSearchBar: false,
+  //   infoBarLabel: "tooltip_nota_info",
+  // };
 
   const players = {
     items: convertToDropdownInput(dummy__players()),
@@ -515,12 +515,11 @@ export function useDefaultItemsForDropdownUnits({ initDropdowns }, workType) {
 
   const types = {
     //all: DONE
-    all: [genreAndForm, languages, publicationYear, ages].map(
-      (dropdownUnit) =>
-        getDropdownFromUrl({
-          initDropdowns: initDropdowns,
-          dropdownUnit: dropdownUnit,
-        })
+    all: [genreAndForm, languages, publicationYear, ages].map((dropdownUnit) =>
+      getDropdownFromUrl({
+        initDropdowns: initDropdowns,
+        dropdownUnit: dropdownUnit,
+      })
     ),
     // literature: DONE
     literature: [
