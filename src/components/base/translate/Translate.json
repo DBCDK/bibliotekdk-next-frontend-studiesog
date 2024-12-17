@@ -604,8 +604,8 @@
         "en": "Your gateway to easily search for the school's books, articles, and high school-relevant resources in one place."
       },
       "greveHeroTxt": {
-        "da": "Biblioteksbasen",
-        "en": "Library base"
+        "da": "GG Studiesøg",
+        "en": "GG Studiesøg"
       },
       "greveReadMore": {
         "da": "Søg bøger og artikler fra Greve Gymnasiums bibliotek og se, hvornår du skal aflevere bøger",
@@ -620,12 +620,12 @@
         "en": "See Stenhus Gymnasium's physical and online materials,\\n and check when you need to return books."
       },
       "roskildeHeroTxt": {
-        "da": "Bib.systemet",
-        "en": "Bib.system"
+        "da": "Biblioteksbasen",
+        "en": "Biblioteksbasen"
       },
       "roskildeReadMore": {
-        "da": "Søg i skolens bøger, artikler, Infomedia, film, Faktalink, e-bøger og meget mere.",
-        "en": "Search the school's books, articles, Infomedia, films, Faktalink, e-books, and much more."
+        "da": "Søg i skolens bøger, avisartikler, Faktalink, Forfatterweb, Infomedia, Filmcentralen, Videnskab.dk , -  og meget mere",
+        "en": "Search the school's books, newspaper articles, Faktalink, Forfatterweb, Infomedia, Filmcentralen, Videnskab.dk, - and much more"
       },
       "heroTxt": {
         "da": "Biblioteksbasen",
@@ -4541,7 +4541,7 @@
         "en": "Bibliotek.dk | Loan from all of Denmark's libraries"
       },
       "frontpage-description": {
-        "da": "Én samlet indgang til alle landets biblioteker. Bestil her og hent på dit lokale bibliotek. Lån og reserver bøger, artikler, film, musik, spil, osv.",
+        "da": "Søg bøger og artikler fra dit gymnasiums bibliotek",
         "en": "One single entrance to all the country's libraries. Order here and pick up at your local library. Borrow and reserve books, articles, movies, music, games, etc."
       },
       "find-title": {
