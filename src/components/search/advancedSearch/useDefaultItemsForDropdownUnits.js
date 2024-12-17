@@ -515,7 +515,7 @@ export function useDefaultItemsForDropdownUnits({ initDropdowns }, workType) {
 
   const types = {
     //all: DONE
-    all: [genreAndForm, languages, publicationYear, ages, nota].map(
+    all: [genreAndForm, languages, publicationYear, ages].map(
       (dropdownUnit) =>
         getDropdownFromUrl({
           initDropdowns: initDropdowns,
@@ -529,7 +529,6 @@ export function useDefaultItemsForDropdownUnits({ initDropdowns }, workType) {
       publicationYear,
       languages,
       ages,
-      nota,
     ].map((dropdownUnit) => {
       return getDropdownFromUrl({
         initDropdowns: initDropdowns,
@@ -542,7 +541,6 @@ export function useDefaultItemsForDropdownUnits({ initDropdowns }, workType) {
       genreAndForm,
       publicationYear,
       languages,
-      nota,
     ].map((dropdownUnit) =>
       getDropdownFromUrl({
         initDropdowns: initDropdowns,
