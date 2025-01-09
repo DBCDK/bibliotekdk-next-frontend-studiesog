@@ -129,6 +129,7 @@ export function SearchFeedBack({ onThumbsUp, onThumbsDown }) {
         <span
           className={styles.spanwrap}
           role="button"
+          aria-label="thumbsup"
           onClick={onThumbsUp}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -140,7 +141,7 @@ export function SearchFeedBack({ onThumbsUp, onThumbsDown }) {
           <Icon
             size={{ w: "auto", h: 3 }}
             src="thumbsup.svg"
-            alt="nice"
+            alt="thumbsup"
             className={styles.feedbackicon}
             data-cy="search-feedback-thumbsup"
           />
@@ -154,12 +155,13 @@ export function SearchFeedBack({ onThumbsUp, onThumbsDown }) {
               onThumbsDown && onThumbsDown();
             }
           }}
+          aria-label="thumbsdown"
           tabIndex={0}
         >
           <Icon
             size={{ w: "auto", h: 3 }}
             src="thumbsdown.svg"
-            alt="nice"
+            alt="thumbsdown"
             className={styles.feedbackicon}
             data-cy="search-feedback-thumbsdown"
           />
