@@ -150,6 +150,7 @@ export default function Pagination({
             orientation={"right"}
             dataDisabled={!(!isLoading && showNextPageArrow)}
             size={{ w: 4, h: 4 }}
+            alt="next"
           />
 
           {!showNextPageArrow && <div className={styles.arrowPlaceholder} />}

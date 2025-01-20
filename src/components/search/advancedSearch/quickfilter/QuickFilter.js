@@ -33,6 +33,7 @@ function ListGroup({ filter }) {
                 label={value.label}
                 className={styles.radio}
                 checkBoxStyle={true}
+                aria-checked={selected || "false"}
               >
                 <Text type="text3" className={styles.text}>
                   {value.label}

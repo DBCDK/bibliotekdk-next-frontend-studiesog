@@ -9,7 +9,7 @@ export function Arrow({
   clickCallback,
   orientation,
   arrowClass,
-  dataDisabled = false,
+  dataDisabled = true,
   dataCy = `${orientation}_arrow`,
   size = { w: 5, h: 5 },
   tabIndex = 0,
@@ -35,8 +35,9 @@ export function Arrow({
       tag={"button"}
       dataCy={dataCy}
       tabIndex={tabIndex}
+      aria-label={orientation === "right" ? "next" : "previous"}
     >
-      <ArrowTag />
+      <ArrowTag alt="fisk" />
     </Icon>
   );
 }

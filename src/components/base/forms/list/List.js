@@ -45,7 +45,7 @@ function Radio({
       data-cy={props["data-cy"]}
       ref={_ref}
       role="radio"
-      aria-checked={selected}
+      aria-checked={selected || "false"}
       aria-disabled={!!disabled}
       disabled={!!disabled}
       onClick={() => {
