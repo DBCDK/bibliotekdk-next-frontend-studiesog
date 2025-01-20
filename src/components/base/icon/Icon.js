@@ -38,7 +38,7 @@ function Icon({
   disabled = false,
   tabIndex = null,
   dataCy = null,
-  ariaHidden = true,
+  ariaHidden = false,
   tag = "i",
   style = {},
   ...props
@@ -85,6 +85,8 @@ function Icon({
       aria-hidden={ariaHidden}
       tabIndex={tabIndex}
       data-cy={props["data-cy"] || dataCy || ""}
+      alt={alt}
+      aria-label={props["aria-label"] || ""}
     >
       {children || <img src={`/icons/${src}`} alt={alt} />}
     </Tag>
@@ -153,4 +155,5 @@ Container.propTypes = {
   "data-cy": PropTypes.string,
   tabIndex: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   tag: PropTypes.oneOf(["i", "button"]),
+  "aria-label": PropTypes.string,
 };

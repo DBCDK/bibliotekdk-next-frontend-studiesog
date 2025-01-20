@@ -36,7 +36,7 @@ function TestUserActive() {
  * @returns {React.JSX.Element}
  */
 export default function Logo({ href = "/" }) {
-  const { logoPath } = useAgencyFromSubdomain();
+  const { logoPath, agency } = useAgencyFromSubdomain();
 
   if (!logoPath) {
     return null;
@@ -54,7 +54,7 @@ export default function Logo({ href = "/" }) {
         <Image
           style={{ width: "auto" }}
           src={logoPath}
-          alt="logo"
+          alt={`${agency?.agencyName} logo`}
           width={200}
           height={50}
         />
