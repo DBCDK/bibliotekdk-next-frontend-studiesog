@@ -27,6 +27,7 @@
 .skeleton {
   width: fit-content;
   display: block;
+  background-color: var(--blue);
 }
 
 .footerlink {

@@ -59,7 +59,7 @@ const SecondColumn = () => {
       <Text type="text4">{label}</Text>
       <div className={styles.spacer}></div>
       <div className={styles.contactContainer}>
-        <Text type="text3" skeleton={skeleton}>
+        <Text type="text3" skeleton={skeleton ? styles.skeleton : ""}>
           {agency?.agencyName}
         </Text>
         {agency?.postalAddress && (
