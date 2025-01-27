@@ -24,6 +24,11 @@
   padding-bottom: var(--pt5);
 }
 
+.skeleton {
+  width: fit-content;
+  display: block;
+}
+
 .footerlink {
   display: inline;
   --underline-font-color: var(--white);

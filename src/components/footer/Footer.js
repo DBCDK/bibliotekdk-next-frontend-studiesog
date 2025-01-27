@@ -50,13 +50,18 @@ import useAgencyFromSubdomain from "@/components/hooks/useSubdomainToAgency";
  */
 const SecondColumn = () => {
   const { agency } = useAgencyFromSubdomain();
+
   let label = Translate({ context: "footer", label: "contact" });
+  const skeleton = agency?.isLoading;
+
   return (
     <React.Fragment>
       <Text type="text4">{label}</Text>
       <div className={styles.spacer}></div>
       <div className={styles.contactContainer}>
-        <Text type="text3">{agency?.agencyName}</Text>
+        <Text type="text3" skeleton={skeleton}>
+          {agency?.agencyName}
+        </Text>
         {agency?.postalAddress && (
           <Text type="text3">{agency?.postalAddress}</Text>
         )}
