@@ -114,6 +114,8 @@ function FieldInput({ index, fieldValue, doAdvancedSearch }) {
                     doAdvancedSearch();
                   }
                 }}
+                aria-labelledby={inputId}
+                aria-label={placeholder}
               />
             </Suggester>
           </div>
