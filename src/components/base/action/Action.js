@@ -27,7 +27,7 @@ import styles from "./Action.module.css";
  */
 export default function Action({
   className = "",
-  href = "/#",
+  href = "",
   badge = null,
   title = "Go!",
   icon = "star.svg",
