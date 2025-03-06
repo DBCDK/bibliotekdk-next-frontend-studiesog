@@ -52,14 +52,20 @@ export default function useLoanerInfo() {
       }
     });
 
+    console.log(userRes, "USERRER");
+
     return {
       loanerInfo: userRes && {
         agencies: user?.agencies?.filter((a) => a.id === agency?.agencyId),
-        loans: user?.loans.filter((l) => l?.agencyId === agency?.agencyId),
-        orders: user?.orders?.filter(
+        loans: user?.loans?.result?.filter(
+          (l) => l?.agencyId === agency?.agencyId
+        ),
+        orders: user?.orders?.result?.filter(
           (o) => o?.pickUpBranch?.agencyId === agency?.agencyId
         ),
-        debt: user?.debt?.filter((d) => d.agencyId === agency?.agencyId),
+        debt: user?.debt?.result?.filter(
+          (d) => d.agencyId === agency?.agencyId
+        ),
         mail: user?.mail,
         municipalityAgencyId: user?.municipalityAgencyId,
         name: user?.name,
