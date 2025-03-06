@@ -52,8 +52,6 @@ export default function useLoanerInfo() {
       }
     });
 
-    console.log(userRes, "USERRER");
-
     return {
       loanerInfo: userRes && {
         agencies: user?.agencies?.filter((a) => a.id === agency?.agencyId),
