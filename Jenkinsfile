@@ -115,6 +115,13 @@ pipeline {
                             message: "${JOB_NAME} #${BUILD_NUMBER} failed and needs attention: ${BUILD_URL}",
                             tokenCredentialId: 'slack-global-integration-token')
                 }
+               // if ("${BRANCH_NAME}" == 'main') {//todo try on branch
+                    slackSend(
+                    channel: 'febib-developers',
+                    color: 'danger',
+                    message: "🚨 Hov, Studiesøg prod build failed 🚨"
+                    )
+               // }
             }
         }
         success {
