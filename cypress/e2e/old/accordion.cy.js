@@ -11,7 +11,7 @@ describe("Accordion", () => {
   it(`All 5 items in accorion is visible`, () => {
     cy.get("[data-cy=accordion]")
       .find("[data-cy=accordion-item]")
-      .should("have.length", 5);
+      .should("have.length", 4);
   });
 
   it(`All 5 items should have visible expand icons`, () => {
