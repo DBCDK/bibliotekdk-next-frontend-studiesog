@@ -92,6 +92,22 @@ const SecondColumn = () => {
           })}
         </Text>
       </Link>
+      {agency?.digst && (
+        <div>
+          <Link
+            border={{ bottom: { keepVisible: true } }}
+            href={agency?.digst}
+            className={styles.footerlink}
+          >
+            <Text tag="span" type="text3">
+              {Translate({
+                context: "footer",
+                label: "accessibility",
+              })}
+            </Text>
+          </Link>
+        </div>
+      )}
     </React.Fragment>
   );
 };
@@ -117,11 +133,11 @@ const ContactLinks = () => {
     //   query: {},
     // },
     // English: { pathname: "/", query: {} },
-    accessibility: {
-      pathname: "https://www.was.digst.dk/bibliotek-dk",
-      query: {},
-      target: "_blank",
-    },
+    // accessibility: {
+    //   pathname: "https://www.was.digst.dk/bibliotek-dk",
+    //   query: {},
+    //   target: "_blank",
+    // },
   };
 
   const FooterLink = function ({ href, children, onClick, target = "_self" }) {

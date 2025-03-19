@@ -142,9 +142,9 @@ function useUserImpl() {
       });
     } else if (userData && !userIsLoading) {
       setLoanerInfo({
-        debt: userData?.user?.debt,
-        loans: userData?.user?.loans,
-        orders: userData?.user?.orders,
+        debt: userData?.user?.debt?.result || [],
+        loans: userData?.user?.loans?.result || [],
+        orders: userData?.user?.orders?.result || [],
         agencies: userData?.user?.agencies,
         municipalityAgencyId: userData?.user?.municipalityAgencyId,
         ...sessionData,
@@ -186,10 +186,10 @@ function useUserImpl() {
       let updatedData;
       switch (type) {
         case "LOAN":
-          updatedData = { loans: userData?.user?.loans };
+          updatedData = { loans: userData?.user?.loans?.result };
           break;
         case "ORDER":
-          updatedData = { orders: userData?.user?.orders };
+          updatedData = { orders: userData?.user?.orders?.result };
           break;
         default:
           break;

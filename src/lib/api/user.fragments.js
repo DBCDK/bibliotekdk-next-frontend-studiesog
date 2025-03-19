@@ -110,66 +110,72 @@ export function basic() {
           }
         }
         debt {
+          result {
             title
             amount
             creator
             date
             currency
             agencyId
+            }
         }
         loans {
-          agencyId
-          loanId
-          dueDate
-          title
-          creator
-          manifestation {
-            pid
-            ...manifestationTitleFragment
-            ownerWork {
-              workId
+          result {
+            agencyId
+            loanId
+            dueDate
+            title
+            creator
+            manifestation {
+              pid
+              ...manifestationTitleFragment
+              ownerWork {
+                workId
+              }
+              creators {
+                ...creatorsFragment
+              }
+              materialTypes {
+                ...materialTypesFragment
+              }
+              cover {
+                thumbnail
+              }
+              recordCreationDate
             }
-            creators {
-              ...creatorsFragment
-            }
-            materialTypes {
-              ...materialTypesFragment
-            }
-            cover {
-              thumbnail
-            }
-            recordCreationDate
           }
         }
         orders {
-          orderId
-          status
-          pickUpBranch {
-            agencyName
-            agencyId
-          }
-          pickUpExpiryDate
-          holdQueuePosition
-          creator
-          orderType
-          orderDate
-          title
-          manifestation {
-            pid
-            ...manifestationTitleFragment
-            ownerWork {
-              workId
+          result {
+            orderId
+            status
+            pickUpBranch {
+              agencyName
+              agencyId
             }
-            creators {
-              ...creatorsFragment
+            pickUpExpiryDate
+            holdQueuePosition
+            creator
+            orderType
+            orderDate
+            title
+            manifestation {
+              pid
+              ...manifestationTitleFragment
+              ownerWork {
+                workId
+              }
+              creators {
+                ...creatorsFragment
+              }
+              materialTypes {
+                ...materialTypesFragment
+              }
+              cover {
+                thumbnail
+              }
+              recordCreationDate
             }
-            materialTypes {
-              ...materialTypesFragment
-            }
-            cover {
-              thumbnail
-            }
-            recordCreationDate
           }
         }   
       }
