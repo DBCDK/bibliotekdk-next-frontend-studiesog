@@ -197,14 +197,14 @@ export function useManifestationAccess({ pids, filter }) {
     access.forEach((entry) => (accessMap[entry.__typename] = entry));
 
     // if there is NOT digital access AND ILL access we remove ill - we only allow orders for digital access :)
-    if (
-      !accessMap?.[AccessEnum.DIGITAL_ARTICLE_SERVICE] &&
-      accessMap?.[AccessEnum.INTER_LIBRARY_LOAN]
-    ) {
-      access = access?.filter(
-        (acc) => acc.__typename !== AccessEnum.INTER_LIBRARY_LOAN
-      );
-    }
+    // if (
+    //   !accessMap?.[AccessEnum.DIGITAL_ARTICLE_SERVICE] &&
+    //   accessMap?.[AccessEnum.INTER_LIBRARY_LOAN]
+    // ) {
+    //   access = access?.filter(
+    //     (acc) => acc.__typename !== AccessEnum.INTER_LIBRARY_LOAN
+    //   );
+    // }
     //  finally - if user is authenticated has no rights we remove digital access
     const userHasDigitalAccess = userRights?.digitalArticleService;
     if (isAuthenticated && !userHasDigitalAccess) {
