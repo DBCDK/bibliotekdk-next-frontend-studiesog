@@ -21,6 +21,7 @@ import Title from "@/components/base/title/Title";
 import { useRouter } from "next/router";
 import BookmarkDropdown from "@/components/work/overview/bookmarkDropdown/BookmarkDropdown";
 import isEmpty from "lodash/isEmpty";
+import HoldingStatus from "@/components/work/overview/holdingStatus/HoldingStatus";
 
 function useInitMaterialType(
   uniqueMaterialTypes,
@@ -150,6 +151,7 @@ export function Overview({
                   workId={workId}
                   selectedPids={selectedPids}
                 />
+
                 <BookmarkDropdown
                   materialId={workId}
                   workId={workId}
@@ -158,11 +160,13 @@ export function Overview({
                   className={styles.svgscale}
                   editions={work?.manifestations?.mostRelevant}
                 />
+
                 {/*<AlternativeOptions*/}
                 {/*  workId={workId}*/}
                 {/*  selectedPids={selectedPids}*/}
                 {/*/>*/}
               </Col>
+              <HoldingStatus selectedPids={selectedPids} />
             </Col>
           </Col>
         </Row>

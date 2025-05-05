@@ -186,6 +186,8 @@ export const ReservationButton = ({
 }) => {
   access = sortEreolFirst(access);
 
+  console.log(branch, "BRANCH");
+
   const { start } = useOrderFlow();
   // this is studiesøg - we always have an agency :)
   const { agency } = useAgencyFromSubdomain();
@@ -226,6 +228,9 @@ export const ReservationButton = ({
       },
     };
 
+    // @TODO .. an article .. user has no digital access rights .. order or not ???
+    // @TODO .. should we check holdings .. there is only One library in this application !!
+    // @TODO holdings are in branch :)
     const loginRequiredText = Translate({
       context: "general",
       label: "bestil",

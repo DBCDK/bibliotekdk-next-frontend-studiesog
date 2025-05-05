@@ -147,6 +147,9 @@ function flattenAccess(manifestations) {
  */
 export function useManifestationAccess({ pids, filter }) {
   const { rights: userRights, isLoading: rightIsLoading } = useRights();
+
+  console.log(userRights, "USERRIGHTS");
+
   const { isAuthenticated } = useAuthentication();
   // we need the agency to check if pickup is allowed (ill)
   const { agency } = useSubdomainToAgency();

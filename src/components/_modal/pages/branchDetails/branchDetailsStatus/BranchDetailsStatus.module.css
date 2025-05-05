@@ -1,13 +1,21 @@
 .row_wrapper {
-  display: flex;
-  flex-direction: row;
+  /*display: flex;*/
+  /*flex-direction: row;*/
+  margin-top: var(--pt1);
+}
+
+.message{
+  margin-left: var(--pt1);
+}
+
+.location{
+
 }
 
 .result {
-  margin-left: var(--pt1);
-  display: inline-flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+
+  /*display: inline-flex;*/
+
   width: 100%;
 }
 
