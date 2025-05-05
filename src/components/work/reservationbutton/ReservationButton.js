@@ -256,7 +256,7 @@ export const ReservationButton = ({
         props: {
           dataCy: "button-order-overview-enabled",
           onClick: () => {
-            window.open(lookupUrl, "_self");
+            window.open(lookupUrl, "_blank");
           },
         },
         text: Translate({ context: "overview", label: "see_location" }),
