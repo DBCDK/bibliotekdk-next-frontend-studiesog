@@ -46,6 +46,7 @@ export function userAgencies() {
     query: `
     query UserAgencies {
       user {
+        municipalityAgencyId        
           agencies {
             id
             name
