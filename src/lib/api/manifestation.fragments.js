@@ -24,6 +24,25 @@ export function refWorks({ pids }) {
   };
 }
 
+export function dk5({ pid }) {
+  return {
+    apiUrl: ApiEnums.FBI_API,
+    query: `
+    query dk5($pid: String!) {
+     manifestation(pid: $pid) {
+        classifications {
+          system
+          code
+          dk5Heading
+          display
+        }
+      }
+    }`,
+    variables: { pid },
+    slowThreshold: 3000,
+  };
+}
+
 export function ris(pids) {
   return {
     apiUrl: ApiEnums.FBI_API,
