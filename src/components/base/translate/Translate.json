@@ -433,8 +433,8 @@
         "en": "Let-number"
       },
       "label-specificmaterialtype": {
-        "da": "Format",
-        "en": "Format"
+        "da": "Materialetype",
+        "en": "Materialtype"
       },
       "label-creator": {
         "da": "Forfatter / ophav",
