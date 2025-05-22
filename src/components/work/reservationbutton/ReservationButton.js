@@ -69,7 +69,6 @@ function ReservationButtonWrapper({
 
   const {
     access,
-
     hasPhysicalCopy,
     hasDigitalCopy,
     isLoading: isLoadingAccess,
@@ -82,7 +81,11 @@ function ReservationButtonWrapper({
     isLoading: isLoadingManifestationData,
   } = useManifestationData({ pids: selectedPids });
 
-  const { branches } = useHoldingsForAgency({
+  const {
+    branches,
+    isReservable,
+    isLoading: isLoadingHoldings,
+  } = useHoldingsForAgency({
     pids: selectedPids,
     agencyId: agency?.agencyId,
   });
@@ -105,13 +108,17 @@ function ReservationButtonWrapper({
   } = useAuthentication();
   const modal = useModal();
 
+  const isLoading =
+    isLoadingAuthentication ||
+    isLoadingWorkData ||
+    isLoadingAccess ||
+    isLoadingHoldings;
+
   if (
     !workId ||
     !selectedPids ||
     selectedPids?.length === 0 ||
-    isLoadingAuthentication ||
-    isLoadingWorkData ||
-    isLoadingAccess ||
+    isLoading ||
     (requireLocalizations && isLoadingManifestationData)
   ) {
     return (
@@ -138,6 +145,7 @@ function ReservationButtonWrapper({
         buttonType,
         size,
         pids: selectedPids,
+        isReservable,
         shortText,
         singleManifestation,
         workId,
@@ -183,6 +191,7 @@ export const ReservationButton = ({
   modal,
   bookmarkKey,
   pids,
+  isReservable,
 }) => {
   access = sortEreolFirst(access);
 
@@ -207,6 +216,7 @@ export const ReservationButton = ({
         start({ orders: [{ pids }], initialBranch: agency });
       },
     };
+
     if (hasDigitalCopy) {
       return {
         props: digitalCopyProps,
@@ -222,7 +232,10 @@ export const ReservationButton = ({
       skeleton: isEmpty(access),
       dataCy: `button-order-overview-enabled`,
       onClick: () => {
-        start({ orders: [{ pids, bookmarkKey: bookmarkKey }] });
+        start({
+          orders: [{ pids, bookmarkKey: bookmarkKey }],
+          initialBranch: agency,
+        });
       },
     };
 
@@ -230,8 +243,9 @@ export const ReservationButton = ({
       context: "general",
       label: "bestil",
     });
+
     // if pickup is allowed (ill)
-    if (agency.pickupAllowed && hasILL) {
+    if (agency.pickupAllowed && hasILL && isReservable) {
       return {
         props: loginRequiredProps,
         text: loginRequiredText,
@@ -243,7 +257,7 @@ export const ReservationButton = ({
     // we need the local identifier to find the lookup url
     // we use the first pid in array - they have been sorted with newest first :)
     // we use branch.lookupUrl as fallback or set it to null if all fails
-    const localIdentifier = pids[0].split(":")[1];
+    const localIdentifier = pids?.[0]?.split(":")[1];
     const lookupUrl =
       branch?.holdings?.lookupUrls?.find((lookup) =>
         lookup?.endsWith(localIdentifier)

@@ -61,14 +61,29 @@ function getLocations(branch) {
   if (!branch?.holdings?.items?.length) {
     return;
   }
+
+  const shelfmark = getShelfmark(branch);
+
   return uniq(
-    branch?.holdings?.items?.map((item) =>
-      [item?.department, item?.location, item?.subLocation]
-        .filter((entry) => !!entry)
+    branch.holdings.items.map((item) =>
+      [item?.department, item?.location, item?.subLocation, shelfmark.code]
+        .filter(Boolean)
         .join(" > ")
     )
   );
 }
+
+function getShelfmark(branch) {
+  return (
+    branch?.holdings?.items?.flatMap(
+      (item) =>
+        item?.manifestation?.classifications
+          ?.filter((c) => c?.entryType === "MAIN_ENTRY" && c?.code)
+          .map((c) => c) || []
+    )[0] || null
+  );
+}
+
 /**
  *
  */
@@ -92,6 +107,7 @@ export function useHoldingsForAgency({ agencyId, pids }) {
           }),
         },
         locations: getLocations(branch),
+        shelfmark: getShelfmark(branch),
         sortScore: AVAILABILITY_SORT_SCORE[branch?.holdings?.status],
       }));
   }, [data?.branches?.result]);
@@ -110,11 +126,25 @@ export function useHoldingsForAgency({ agencyId, pids }) {
       (branch) => branch?.holdings?.status !== HoldingStatusEnum.UNKNOWN_STATUS
     );
   }, [branches]);
+
   const branchesUnknownStatus = useMemo(() => {
     return branches?.filter(
       (branch) => branch?.holdings?.status === HoldingStatusEnum.UNKNOWN_STATUS
     );
   }, [branches]);
+
+  const reservablePids = useMemo(() => {
+    return (
+      branches?.flatMap(
+        (branch) =>
+          branch.holdings?.items
+            ?.filter(({ reservable }) => reservable)
+            .map(({ manifestation }) => manifestation) || []
+      ) || []
+    );
+  }, [branches]);
+
+  console.log("reservablePids", reservablePids);
 
   const expectedAgencyReturnDate =
     branchesByAvailability?.[0]?.holdings?.expectedAgencyReturnDate &&
@@ -135,6 +165,8 @@ export function useHoldingsForAgency({ agencyId, pids }) {
     branchesByAvailability?.[0]?.holdings?.ownedByAgency || 0;
 
   return {
+    isReservable: !!reservablePids?.length,
+    reservableManifestations: reservablePids,
     agencyHoldingsLamp,
     branches,
     branchesKnownStatus,

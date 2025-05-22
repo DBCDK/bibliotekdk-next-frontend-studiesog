@@ -311,13 +311,23 @@ export function holdingsForAgency({ agencyId, pids }) {
           pickupAllowed
           holdings(pids: $pids) {
             status
+            reservable
             expectedAgencyReturnDate
             expectedBranchReturnDate
             ownedByAgency
             items {
+              reservable
               department
               location
               subLocation
+              manifestation {
+                pid
+                classifications {
+                  code
+                  dk5Heading
+                  entryType
+                }
+              }
             }
             lookupUrl
             lookupUrls
