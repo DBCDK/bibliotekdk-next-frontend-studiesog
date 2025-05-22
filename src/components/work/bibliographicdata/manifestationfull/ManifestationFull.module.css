@@ -68,6 +68,26 @@
   -webkit-column-break-inside: avoid;
 }
 
+.holdings {
+  padding-top: var(--pt1);
+}
+
+.holdings p,
+.holdings span {
+  /* override component styles */
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.holdings i,
+.holdings img {
+  /* override component styles */
+  padding-top: 0 !important;
+  width: var(--pt1_5) !important;
+  max-width: var(--pt1_5) !important;
+  max-height: var(--pt1_5) !important;
+}
+
 @media (min-width: 768px) {
   .container {
     column-count: 2;

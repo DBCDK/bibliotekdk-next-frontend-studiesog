@@ -10,6 +10,10 @@
   margin: 0;
 }
 
+.holdings {
+  padding-top: var(--pt2);
+}
+
 .breadcrumbs {
   padding-bottom: var(--pt3);
 }

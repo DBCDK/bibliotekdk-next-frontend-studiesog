@@ -7,6 +7,7 @@ import { useOrderFlow } from "@/components/hooks/order";
 import { useManifestationAccess } from "@/components/hooks/useManifestationAccess";
 import { useData } from "@/lib/api/api";
 import * as manifestationFragments from "@/lib/api/manifestation.fragments";
+import useAgencyFromSubdomain from "@/components/hooks/useSubdomainToAgency";
 
 /**
  * Component helper for link and description in options
@@ -45,6 +46,7 @@ function optionsListAllArgs({
   index,
   selectedPids,
   manifestations,
+  agency,
   startOrderFlow,
 }) {
   //add order modal to store, to be able to access when coming back from adgangsplatform/mitid?
@@ -61,7 +63,10 @@ function optionsListAllArgs({
     materialTypesArray: materialTypeArray,
     className: styles.item,
     onOrder: () => {
-      startOrderFlow({ orders: [{ pids: selectedPids }] });
+      startOrderFlow({
+        orders: [{ pids: selectedPids }],
+        initialBranch: agency,
+      });
     },
   };
   return (
@@ -76,6 +81,7 @@ function optionsListAllArgs({
 export function Options({ context }) {
   const { title, selectedPids } = { ...context };
   const { start } = useOrderFlow();
+  const { agency } = useAgencyFromSubdomain();
 
   const { access } = useManifestationAccess({
     pids: selectedPids,
@@ -94,6 +100,7 @@ export function Options({ context }) {
       index,
       selectedPids,
       manifestations,
+      agency,
       startOrderFlow: start,
     });
 
