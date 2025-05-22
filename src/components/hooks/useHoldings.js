@@ -144,8 +144,6 @@ export function useHoldingsForAgency({ agencyId, pids }) {
     );
   }, [branches]);
 
-  console.log("reservablePids", reservablePids);
-
   const expectedAgencyReturnDate =
     branchesByAvailability?.[0]?.holdings?.expectedAgencyReturnDate &&
     branchesByAvailability?.[0]?.holdings?.expectedAgencyReturnDate !==

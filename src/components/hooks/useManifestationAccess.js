@@ -15,8 +15,6 @@ import useRights from "@/components/hooks/user/useRights";
  * online materials that are accessible on this site, are favored.
  */
 function sortAccessArray(accessArr) {
-  console.log("accessArr", accessArr, AccessEnum);
-
   accessArr = accessArr.map((access) => {
     let priority = 0;
     if (access.__typename === AccessEnum.ACCESS_URL) {
