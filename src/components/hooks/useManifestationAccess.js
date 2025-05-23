@@ -53,7 +53,7 @@ function sortAccessArray(accessArr) {
     }
 
     if (access.origin === "DBC Webarkiv") {
-      priority += 1;
+      priority -= 4000;
     }
 
     if (access.url) {
@@ -151,6 +151,9 @@ export function useManifestationAccess({ pids, filter }) {
   // we need the agency to check if pickup is allowed (ill)
   const { agency } = useSubdomainToAgency();
 
+  // Only some agencies allow reservations
+  const allowReservations = agency?.allowReservations;
+
   // Fetch data for the pids needed to generate the access array
   const { data, isLoading: accessIsLoading } = useData(
     pids?.length > 0 && accessForManifestations({ pids })
@@ -197,14 +200,17 @@ export function useManifestationAccess({ pids, filter }) {
     access.forEach((entry) => (accessMap[entry.__typename] = entry));
 
     // if there is NOT digital access AND ILL access we remove ill - we only allow orders for digital access :)
-    if (
-      !accessMap?.[AccessEnum.DIGITAL_ARTICLE_SERVICE] &&
-      accessMap?.[AccessEnum.INTER_LIBRARY_LOAN]
-    ) {
-      access = access?.filter(
-        (acc) => acc.__typename !== AccessEnum.INTER_LIBRARY_LOAN
-      );
+    if (!allowReservations) {
+      if (
+        !accessMap?.[AccessEnum.DIGITAL_ARTICLE_SERVICE] &&
+        accessMap?.[AccessEnum.INTER_LIBRARY_LOAN]
+      ) {
+        access = access.filter(
+          (acc) => acc.__typename !== AccessEnum.INTER_LIBRARY_LOAN
+        );
+      }
     }
+
     //  finally - if user is authenticated has no rights we remove digital access
     const userHasDigitalAccess = userRights?.digitalArticleService;
     if (isAuthenticated && !userHasDigitalAccess) {

@@ -68,7 +68,7 @@ export async function fetcher(
 
   const parsedUrl = new URL(apiUrl);
 
-  const rootUrl = `${parsedUrl.protocol}//${parsedUrl.hostname}`;
+  const rootUrl = `${parsedUrl.protocol}//${parsedUrl.host}`;
 
   const headers = {
     "Content-Type": "application/json",

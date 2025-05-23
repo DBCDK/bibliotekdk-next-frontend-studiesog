@@ -15,7 +15,25 @@ import { HoldingStatusEnum } from "@/components/hooks/useHoldings";
  * @param {Array.<string>} props.pids
  * @returns {React.ReactElement | null}
  */
-export default function BranchDetailsStatus({ branch, pids }) {
+export default function BranchDetailsStatus({
+  branch,
+  pids,
+  isLoading = false,
+}) {
+  if (isLoading) {
+    return <Text type="text2" skeleton={true} lines={2} />;
+  }
+
+  if (!pids.length) {
+    return branch?.locations?.map((location) => {
+      return (
+        <Text type="text2" key={location} title={branch?.shelfmark?.dk5Heading}>
+          {location}
+        </Text>
+      );
+    });
+  }
+
   return (
     <div className={cx(styles.row_wrapper)}>
       <AvailabilityLight branch={branch} />
@@ -23,7 +41,11 @@ export default function BranchDetailsStatus({ branch, pids }) {
         <Text type="text2">{branch?.holdingsMessage}</Text>
         {branch?.locations?.map((location) => {
           return (
-            <Text type="text2" key={location}>
+            <Text
+              type="text2"
+              key={location}
+              title={branch?.shelfmark?.dk5Heading}
+            >
               {location}
             </Text>
           );

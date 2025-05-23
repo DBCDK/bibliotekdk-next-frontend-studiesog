@@ -12,6 +12,7 @@ import { useEffect, useMemo } from "react";
 import { MaterialTypeSwitcher } from "@/components/work/overview/materialtypeswitcher/MaterialTypeSwitcher";
 import { CreatorsArray } from "@/components/work/overview/creatorsarray/CreatorsArray";
 import { manifestationMaterialTypeFactory } from "@/lib/manifestationFactoryUtils";
+import AlternativeOptions from "@/components/work/overview/alternatives/Alternatives";
 import CoverCarousel from "@/components/work/overview/covercarousel/CoverCarousel";
 import {
   RenderLanguageAddition,
@@ -21,6 +22,7 @@ import Title from "@/components/base/title/Title";
 import { useRouter } from "next/router";
 import BookmarkDropdown from "@/components/work/overview/bookmarkDropdown/BookmarkDropdown";
 import isEmpty from "lodash/isEmpty";
+import { BranchDetailsStatusWrap } from "@/components/_modal/pages/branchDetails/branchDetailsStatusWrap";
 
 function useInitMaterialType(
   uniqueMaterialTypes,
@@ -150,6 +152,7 @@ export function Overview({
                   workId={workId}
                   selectedPids={selectedPids}
                 />
+
                 <BookmarkDropdown
                   materialId={workId}
                   workId={workId}
@@ -158,11 +161,17 @@ export function Overview({
                   className={styles.svgscale}
                   editions={work?.manifestations?.mostRelevant}
                 />
-                {/*<AlternativeOptions*/}
-                {/*  workId={workId}*/}
-                {/*  selectedPids={selectedPids}*/}
-                {/*/>*/}
+                <AlternativeOptions
+                  workId={workId}
+                  selectedPids={selectedPids}
+                />
               </Col>
+
+              <Row>
+                <Col className={styles.holdings} xs={6}>
+                  <BranchDetailsStatusWrap pids={selectedPids} />
+                </Col>
+              </Row>
             </Col>
           </Col>
         </Row>

@@ -27,6 +27,7 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import cx from "classnames";
 import BookmarkDropdown from "@/components/work/overview/bookmarkDropdown/BookmarkDropdown";
 import { manifestationMaterialTypeFactory } from "@/lib/manifestationFactoryUtils";
+import { BranchDetailsStatusWrap } from "@/components/_modal/pages/branchDetails/branchDetailsStatusWrap";
 
 /**
  * Column one of full view. Some links and a button.
@@ -105,6 +106,9 @@ function ColumnOne({ workId, manifestation }) {
           editions={[manifestation]}
           singleManifestation={true}
         />
+        <div className={styles.holdings}>
+          <BranchDetailsStatusWrap pids={[manifestation?.pid]} />
+        </div>
       </div>
 
       <div className={cx(styles.alternativeoptions)}>
