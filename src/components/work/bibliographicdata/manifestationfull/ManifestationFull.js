@@ -90,22 +90,24 @@ function ColumnOne({ workId, manifestation }) {
       )}
 
       <div className={styles.reservationwrapper}>
-        <ReservationButtonWrapper
-          workId={workId}
-          selectedPids={[manifestation?.pid]}
-          singleManifestation={true}
-          buttonType="secondary"
-          size="small"
-        />
-        <BookmarkDropdown
-          workId={workId}
-          materialId={manifestation?.pid}
-          materialTypes={uniqueMaterialTypes}
-          size={{ w: 4, h: 4 }}
-          title={manifestation?.titles?.sort}
-          editions={[manifestation]}
-          singleManifestation={true}
-        />
+        <div className={styles.buttons}>
+          <ReservationButtonWrapper
+            workId={workId}
+            selectedPids={[manifestation?.pid]}
+            singleManifestation={true}
+            buttonType="secondary"
+            size="small"
+          />
+          <BookmarkDropdown
+            workId={workId}
+            materialId={manifestation?.pid}
+            materialTypes={uniqueMaterialTypes}
+            size={{ w: 4, h: 4 }}
+            title={manifestation?.titles?.sort}
+            editions={[manifestation]}
+            singleManifestation={true}
+          />
+        </div>
         <div className={styles.holdings}>
           <BranchDetailsStatusWrap pids={[manifestation?.pid]} />
         </div>
