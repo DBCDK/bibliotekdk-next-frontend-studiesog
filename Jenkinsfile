@@ -114,9 +114,16 @@ pipeline {
             script {
                 if ("${BRANCH_NAME}" == 'main') {
                     slackSend(channel: 'fe-drift',
-                            color: 'warning',
-                            message: "${JOB_NAME} #${BUILD_NUMBER} failed and needs attention: ${BUILD_URL}",
-                            tokenCredentialId: 'slack-global-integration-token')
+                        color: 'warning',
+                        message: "${JOB_NAME} #${BUILD_NUMBER} failed and needs attention: ${BUILD_URL}",
+                        tokenCredentialId: 'slack-global-integration-token'
+                    )
+
+                    slackSend(
+                        channel: 'febib-developers',
+                        color: 'danger',
+                        message: "🚨 Hov, Studiesøg prod build failed 🚨"
+                    )
                 }
             }
         }
