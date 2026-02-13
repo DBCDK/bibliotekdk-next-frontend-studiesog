@@ -110,19 +110,19 @@ export default function Wrap({ page, onWorkClick, onPageChange }) {
 
   // use the useData hook to fetch data
   const fastResponse = useData(
-    hasQuery && searchFragments.hitcount({ q, filters }),
+    hasQuery && searchFragments.hitcount({ q, filters })
   );
 
   // prioritized q type to get related subjects for
   const query = q.subject || q.all || q.title || q.creator;
 
   const relatedSubjectsData = useData(
-    query && subjects({ q: [query], limit: 7 }),
+    query && subjects({ q: [query], limit: 7 })
   );
 
   const relatedSubjects =
     relatedSubjectsData?.recommendations?.subjects?.map?.(
-      ({ subject }) => subject,
+      ({ subject }) => subject
     ) || [];
 
   if (fastResponse.error) {
