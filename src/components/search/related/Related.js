@@ -109,7 +109,7 @@ export default function Wrap() {
   const query = q.subject || q.all || q.title || q.creator;
 
   const { data, isLoading } = useData(
-    query && subjects({ q: [query], limit: 7 })
+    query && subjects({ q: [query], limit: 7 }),
   );
 
   const relatedSubjects =

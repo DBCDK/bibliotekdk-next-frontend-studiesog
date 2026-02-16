@@ -52,7 +52,13 @@ MusicNoTags.story = {
       debug: true,
       resolvers: {
         Query: {
-          relatedSubjects: () => ["savn", "melankoli"],
+          recommendations: () => ({}),
+        },
+        Recommendations: {
+          subjects: () => [
+            { traceId: "0123", subject: "savn" },
+            { traceId: "3210", subject: "melankoli" },
+          ],
         },
         Work: {
           workTypes: () => ["MUSIC"],
@@ -105,7 +111,13 @@ Connected.story = {
       debug: true,
       resolvers: {
         Query: {
-          relatedSubjects: () => ["savn", "melankoli"],
+          recommendations: () => ({}),
+        },
+        Recommendations: {
+          subjects: () => [
+            { traceId: "0123", subject: "savn" },
+            { traceId: "3210", subject: "melankoli" },
+          ],
         },
         Work: {
           workTypes: () => ["LITERATURE"],

@@ -93,7 +93,7 @@ export default function Wrap({ workId }) {
 
   // fetch work subjects
   const { data: workData, isLoading: workIsLoading } = useData(
-    workFragments.subjects({ workId })
+    workFragments.subjects({ workId }),
   );
 
   // filter on danish keywords && flatten subjects to array of strings
@@ -105,7 +105,7 @@ export default function Wrap({ workId }) {
 
   // get related subjects
   const { data, isLoading } = useData(
-    keywords?.length && subjects({ q: keywords })
+    keywords?.length && subjects({ q: keywords }),
   );
 
   const relatedSubjects =
