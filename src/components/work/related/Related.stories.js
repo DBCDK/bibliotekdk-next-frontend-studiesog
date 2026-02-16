@@ -117,6 +117,7 @@ Connected.story = {
           subjects: () => [
             { traceId: "0123", subject: "savn" },
             { traceId: "3210", subject: "melankoli" },
+            { traceId: "0001", subject: "ost" },
           ],
         },
         Work: {
