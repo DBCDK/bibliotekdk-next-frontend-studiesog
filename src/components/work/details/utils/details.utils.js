@@ -132,12 +132,12 @@ function getRequirementsFromPhysicalDesc(manifestation) {
  */
 function parseMovieContributors(manifestation) {
   const actors = manifestation?.contributors?.filter((cont) =>
-    cont?.roles?.find((rol) => rol.functionCode === "act"),
+    cont?.roles?.find((rol) => rol.functionCode === "act")
   );
 
   const others =
     manifestation?.contributors?.manifestation?.contributors?.filter((cont) =>
-      cont?.roles?.find((rol) => rol.functionCode !== "act"),
+      cont?.roles?.find((rol) => rol.functionCode !== "act")
     );
   const actorslabel =
     actors?.length > 1
@@ -852,7 +852,7 @@ export function fieldsForRows(manifestation, work, context) {
             manifestation?.notes?.length > 0 &&
             manifestation.notes
               ?.filter(
-                (note) => note?.type === "ESTIMATED_PLAYING_TIME_FOR_GAMES",
+                (note) => note?.type === "ESTIMATED_PLAYING_TIME_FOR_GAMES"
               )
               .map((note) => note.display[0])
               .join(", "),
@@ -1126,7 +1126,7 @@ export function filterAndMerge({ baseArray, extendingArray }) {
       ext[key]?.index || ext[key]?.index === 0 ? ext[key]?.index : false;
 
     const baseindex = baseArray?.findIndex(
-      (base) => Object.keys(base)[0] === key,
+      (base) => Object.keys(base)[0] === key
     );
     if (baseindex !== -1) {
       baseArray[baseindex] = ext;

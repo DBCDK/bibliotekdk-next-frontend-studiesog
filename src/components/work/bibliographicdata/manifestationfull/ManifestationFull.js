@@ -72,7 +72,7 @@ function ColumnOne({ workId, manifestation }) {
       window.location.protocol +
         "//" +
         window.location.host +
-        permalinkToPid(window.location.hash),
+        permalinkToPid(window.location.hash)
     );
   }
 
@@ -162,7 +162,7 @@ export default function ManifestationFull({ workId, pid, hasBeenSeen }) {
   const { data } = useData(
     hasBeenSeen &&
       pid &&
-      manifestationFragments.manifestationFullManifestation({ pid: pid }),
+      manifestationFragments.manifestationFullManifestation({ pid: pid })
   );
   const tableOfContentsHeader = Translate({
     context: "bibliographic-data",

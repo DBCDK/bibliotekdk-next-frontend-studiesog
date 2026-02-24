@@ -290,7 +290,7 @@ const fields = () => [
         ?.filter(
           (note) =>
             note?.type !== "ESTIMATED_PLAYING_TIME_FOR_GAMES" &&
-            note?.type !== "TECHNICAL_REQUIREMENTS",
+            note?.type !== "TECHNICAL_REQUIREMENTS"
         )
         .map((note, idx) => (
           <div key={`${note?.display?.join(", ")}${idx}`}>
@@ -456,7 +456,7 @@ function getTvSeriesTitle(Titles) {
 function renderAlternativeTitles(value) {
   const alreadyHandled = titlesToFilterOn(value);
   const toRender = value?.alternative?.filter(
-    (val) => !alreadyHandled.includes(val),
+    (val) => !alreadyHandled.includes(val)
   );
 
   if (!toRender || toRender?.length < 1) {
@@ -485,7 +485,7 @@ function renderTranslatedTitle(value) {
   // only render if values are not rendered before - compare with full, parallel and main
   const alreadyHandled = titlesToFilterOn(value);
   const toRender = value?.translated?.filter(
-    (val) => !alreadyHandled.includes(val),
+    (val) => !alreadyHandled.includes(val)
   );
 
   if (!toRender || toRender?.length < 1) {
@@ -529,7 +529,7 @@ function renderOriginalTitle(value) {
   // only render if values are not rendered before - compare with full, parallel and main
   const alreadyHandled = titlesToFilterOn(value);
   const toRender = value?.original.filter(
-    (val) => !alreadyHandled.includes(val),
+    (val) => !alreadyHandled.includes(val)
   );
   if (toRender?.length < 1) {
     return null;
@@ -558,7 +558,7 @@ function renderOriginalTitle(value) {
  */
 export function parseManifestation(manifestation) {
   const materialTypes = manifestation?.materialTypes?.map(
-    (mat) => mat?.materialTypeGeneral?.code,
+    (mat) => mat?.materialTypeGeneral?.code
   );
   return (
     fields()
@@ -608,7 +608,7 @@ function renderDk5(classifications = []) {
 export function RenderContributors({ contributors = [] }) {
   // we want to show contributors.corporations first - else contributors.persons
   const corporations = contributors?.filter(
-    (cont) => cont?.__typename === "Corporation",
+    (cont) => cont?.__typename === "Corporation"
   );
   const persons = contributors?.filter((cont) => cont?.__typename === "Person");
 

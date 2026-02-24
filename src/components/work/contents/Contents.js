@@ -26,7 +26,7 @@ import Accordion, { Item as AccordionItem } from "@/components/base/accordion";
  */
 export function useTablesOfContents({ workId, pid, type, customRootHeader }) {
   const { data, isLoading, error } = useData(
-    workFragments.workTableOfContents({ workId }),
+    workFragments.workTableOfContents({ workId })
   );
 
   const manifestations = data?.work?.manifestations?.bestRepresentations ?? [];
@@ -37,7 +37,7 @@ export function useTablesOfContents({ workId, pid, type, customRootHeader }) {
       return null;
     }
     const manifestationsWithContents = manifestations.filter((m) =>
-      m.contents?.some((c) => c.entries?.length || c.raw),
+      m.contents?.some((c) => c.entries?.length || c.raw)
     );
 
     const compareStringsDa = (a, b) =>
@@ -74,7 +74,7 @@ export function useTablesOfContents({ workId, pid, type, customRootHeader }) {
   // Optional wrapping with custom root
   const contents = useMemo(() => {
     const contentsWithEntries = targetManifestation?.contents.filter(
-      (c) => c.entries?.length,
+      (c) => c.entries?.length
     );
     if (!contentsWithEntries?.length) {
       return [];
