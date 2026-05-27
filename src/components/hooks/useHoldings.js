@@ -34,10 +34,8 @@ const AVAILABILITY_SORT_SCORE = {
 
 function getBranchHoldingsMessage(branch) {
   const numItems =
-    [
-      HoldingStatusEnum.ON_SHELF,
-      HoldingStatusEnum.ON_SHELF_NOT_FOR_LOAN,
-    ].includes(branch?.holdings?.status) && branch?.holdings?.items?.length;
+    branch?.holdings?.items?.filter?.((entry) => entry?.status === "ONSHELF")
+      ?.length || 0;
 
   let holdingsMessage = Translate({
     context: "holdings",
