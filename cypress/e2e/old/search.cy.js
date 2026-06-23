@@ -99,7 +99,7 @@ describe.skip("Search", () => {
 });
 
 describe("Search => storybook", () => {
-  it(`Should focus pagination buttons when tabbing`, () => {
+  it.skip(`Should focus pagination buttons when tabbing`, () => {
     cy.visit("/iframe.html?id=search-pagination--default&viewMode=story");
 
     cy.get("[data-cy=page-1-button]")

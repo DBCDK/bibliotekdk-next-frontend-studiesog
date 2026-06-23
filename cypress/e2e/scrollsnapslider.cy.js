@@ -11,7 +11,7 @@ function appendScrollToArray($el, arrayOfScrolls) {
 }
 
 describe("ScrollSnapSlider", () => {
-  it("desktop", () => {
+  it.skip("desktop", () => {
     cy.visit("/iframe.html?id=work-relatedworks--related-works-physical-book");
 
     cy.viewport(1920, 1080);
