@@ -1,7 +1,7 @@
 {
   "name": "studiesog",
   "version": "1.0.0",
-  "description": "The frontend for bibliotek.dk",
+  "description": "The frontend for studiesog",
   "main": "index.js",
   "scripts": {
     "dev:next": "NODE_OPTIONS='--require ./logger' next -p ${PORT:-3000}",
