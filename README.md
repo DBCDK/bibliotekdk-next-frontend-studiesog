@@ -21,7 +21,7 @@ The development environment may be set up using either npm or docker-compose.
 ### docker-compose
 
 - `docker-compose -f docker-compose-dev.yml up` will start Storybook on port 4000, Next.js on port 3000
-- `docker run --network="host" -ti --rm -v $(pwd)/e2e:/app/e2e -e CYPRESS_baseUrl=http://localhost:4000 docker.dbc.dk/cypress:latest npm run cy` runs tests (only headless mode supported via docker)
+- `docker run --network="host" -ti --rm -v $(pwd)/e2e:/app/e2e -e CYPRESS_baseUrl=http://localhost:4000 docker.dbc.dk/dbc-cypress:latest npm run cy` runs tests (only headless mode supported via docker)
 
 ## Environment Variables
 

@@ -1,11 +1,11 @@
-import Head from "next/head";
+import NextHead from "next/head";
 
 import useCanonicalUrl from "@/components/hooks/useCanonicalUrl";
 
 import Translate from "@/components/base/translate";
 import useAgencyFromSubdomain from "@/components/hooks/useSubdomainToAgency";
 
-export default function _Head() {
+export default function AppHead() {
   const { agency, favIconPath } = useAgencyFromSubdomain();
   const context = { context: "metadata" };
   const pageTitle = agency?.name || "Studiesøg";
@@ -17,7 +17,7 @@ export default function _Head() {
   const { canonical, alternate } = useCanonicalUrl();
 
   return (
-    <Head>
+    <NextHead>
       <title key="title">{pageTitle}</title>
       <meta
         key="description"
@@ -48,6 +48,6 @@ export default function _Head() {
 
       <meta name="mobile-web-app-capable" content="yes"></meta>
       <meta name="theme-color" content="#3333ff"></meta>
-    </Head>
+    </NextHead>
   );
 }
