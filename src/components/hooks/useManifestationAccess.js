@@ -14,7 +14,7 @@ import useRights from "@/components/hooks/user/useRights";
  * Prioritize after how fast and easy it is to get the material,
  * online materials that are accessible on this site, are favored.
  */
-function sortAccessArray(accessArr) {
+export function sortAccessArray(accessArr) {
   accessArr = accessArr.map((access) => {
     let priority = 0;
     if (access.__typename === AccessEnum.ACCESS_URL) {
@@ -47,13 +47,14 @@ function sortAccessArray(accessArr) {
       priority -= 1001;
     }
 
-    // articles from tidsskrift.dk should be BEFORE webarkiv
+    // articles from tidsskrift.dk should be before other online links
     if (access.origin === "tidsskrift.dk") {
       priority += 2;
     }
 
+    // A copy already stored in the web archive is the fastest access option
     if (access.origin === "DBC Webarkiv") {
-      priority -= 4000;
+      priority += 1000;
     }
 
     if (access.url) {

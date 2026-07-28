@@ -6,6 +6,7 @@ import { useModal } from "@/components/_modal";
 import {
   constructButtonText,
   context,
+  getPreferredOnlineAccess,
   handleGoToLogin,
   sortEreolFirst,
 } from "@/components/work/reservationbutton/utils";
@@ -208,6 +209,19 @@ export const ReservationButton = ({
       (acc) => acc.__typename === AccessEnum.INTER_LIBRARY_LOAN
     );
 
+    const preferredOnlineAccess = getPreferredOnlineAccess(access);
+    if (preferredOnlineAccess) {
+      return {
+        props: {
+          skeleton: !access,
+          dataCy: "button-order-overview",
+          onClick: () =>
+            handleGoToLogin(modal, [preferredOnlineAccess], isAuthenticated),
+        },
+        text: constructButtonText(workTypes, materialTypes),
+      };
+    }
+
     // order digital copy ?
     const digitalCopyProps = {
       skeleton: isEmpty(access),
@@ -275,25 +289,6 @@ export const ReservationButton = ({
         },
         text: Translate({ context: "overview", label: "see_location" }),
         preferSecondary: false,
-      };
-    }
-
-    // is this an access url ?
-    const onlineAccessUrl = Boolean(
-      access?.filter((entry) => entry?.url && entry?.origin !== "www.dfi.dk")
-        .length > 0
-    );
-    // props for button - online access with login options
-    const onlineAccessProps = {
-      skeleton: !access,
-      dataCy: "button-order-overview",
-      onClick: () => handleGoToLogin(modal, access, isAuthenticated),
-    };
-    //ACCESS_URL,INFOMEDIA,EREOL
-    if (onlineAccessUrl) {
-      return {
-        props: onlineAccessProps,
-        text: constructButtonText(workTypes, materialTypes),
       };
     }
 

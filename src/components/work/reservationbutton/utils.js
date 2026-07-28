@@ -72,6 +72,13 @@ export function handleGoToLogin(modal, access, isAuthenticated) {
 }
 
 /**
+ * Return the highest-prioritized usable online access.
+ */
+export function getPreferredOnlineAccess(access) {
+  return access?.find((entry) => entry?.url && entry?.origin !== "www.dfi.dk");
+}
+
+/**
  * @TODO rework with JED 1.1 material type general
  * @param {Array.<string>} workTypes : general materialType
  * @param {MaterialTypesArray} materialTypes : specific material type
