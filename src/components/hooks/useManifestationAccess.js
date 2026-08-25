@@ -17,6 +17,9 @@ import useRights from "@/components/hooks/user/useRights";
 export function sortAccessArray(accessArr) {
   accessArr = accessArr.map((access) => {
     let priority = 0;
+    if (access.__typename === AccessEnum.PUBLIZON) {
+      priority += 6000;
+    }
     if (access.__typename === AccessEnum.ACCESS_URL) {
       priority += 5000;
     }
@@ -45,16 +48,6 @@ export function sortAccessArray(accessArr) {
     // though zetland is an accessurl (+5000) we prioritize it lower than infomedia (+4000)
     if (access.origin === "www.zetland.dk") {
       priority -= 1001;
-    }
-
-    // articles from tidsskrift.dk should be before other online links
-    if (access.origin === "tidsskrift.dk") {
-      priority += 2;
-    }
-
-    // A copy already stored in the web archive is the fastest access option
-    if (access.origin === "DBC Webarkiv") {
-      priority += 1000;
     }
 
     if (access.url) {
