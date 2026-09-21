@@ -58,7 +58,7 @@ export function workTypeTranslator(workTypes) {
  * @returns
  */
 export function handleGoToLogin(modal, access, isAuthenticated) {
-  // if this is an infomedia article it should open in same window
+  // if this is a retriever article it should open in same window
   const urlTarget = access[0]?.id ? "_self" : "_blank";
   // check if we should open login modal on click
   const goToLogin =

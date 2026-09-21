@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import Translate from "@/components/base/translate";
 import { useData } from "@/lib/api/api";
-import { infomediaArticle } from "@/lib/api/infomedia.fragments";
+import { retrieverArticle } from "@/lib/api/retriever.fragments";
 import LoginPrompt from "./Prompt";
 import { openLoginModal } from "@/components/_modal/pages/login/utils";
 import useLoanerInfo from "@/components/hooks/user/useLoanerInfo";
@@ -16,12 +16,12 @@ import useAgencyFromSubdomain from "@/components/hooks/useSubdomainToAgency";
  */
 export default function ArticleLoginPrompt({ articleId }) {
   const { signIn } = useAgencyFromSubdomain();
-  const { loanerInfo } = useLoanerInfo();
+  const { loanerInfo, isLoading: isLoadingLoanerInfo } = useLoanerInfo();
   const { isAuthenticated } = useAuthentication();
-  const hasInfomediaAccess = loanerInfo?.rights?.infomedia;
+  const hasRetrieverAccess = loanerInfo?.rights?.infomedia;
 
   const { data, isLoading } = useData(
-    isAuthenticated && articleId && infomediaArticle({ id: articleId })
+    isAuthenticated && articleId && retrieverArticle({ id: articleId })
   );
 
   //NOT AUTHENTICATED --> Show login button and reminder that not all libraries give access to infomedia
@@ -42,7 +42,11 @@ export default function ArticleLoginPrompt({ articleId }) {
   //AUTHENTICATED AND NO ACCESS either because, we couldnt fetch article (shoudl we show error instead?)
   // OR bc user doesnt have access rights
   // --> Show library name and explain how to obtain access
-  if (!isLoading && (!data?.infomedia?.article || !hasInfomediaAccess)) {
+  if (
+    !isLoading &&
+    !isLoadingLoanerInfo &&
+    (!data?.retriever?.article || !hasRetrieverAccess)
+  ) {
     const linkHref = {
       href: "https://slks.dk/omraader/kulturinstitutioner/biblioteker",
       text: Translate({ context: "articles", label: "libraryAccessReadMore" }),

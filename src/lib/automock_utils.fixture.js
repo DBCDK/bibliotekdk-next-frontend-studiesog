@@ -407,7 +407,7 @@ const MANIFESTATION_7 = {
       status: "OK",
     },
     {
-      __typename: AccessEnum.INFOMEDIA_SERVICE,
+      __typename: AccessEnum.RETRIEVER_SERVICE,
       id: "123123",
       pid: "321321",
     },
@@ -425,7 +425,7 @@ const MANIFESTATION_7 = {
             status: "OK",
           },
           {
-            __typename: AccessEnum.INFOMEDIA_SERVICE,
+            __typename: AccessEnum.RETRIEVER_SERVICE,
             id: "123123",
             pid: "321321",
           },

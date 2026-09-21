@@ -102,6 +102,11 @@ module.exports = {
         destination: "/linkme.php/?rec.id=:pid",
         permanent: true,
       },
+      {
+        source: "/infomedia/:path*",
+        destination: "/retriever/:path*",
+        permanent: true,
+      },
     ];
   },
   experimental: {

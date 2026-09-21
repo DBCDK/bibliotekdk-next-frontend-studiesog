@@ -5,7 +5,7 @@ import {
 } from "@/components/article/content/Content.js";
 
 import ReviewPage from "@/pages/anmeldelse/[title]/[workId]/[articleId]";
-import InfomediaArticlePage from "@/pages/infomedia/[title]/[workId]/[infomediaId]";
+import RetrieverArticlePage from "@/pages/retriever/[title]/[workId]/[retrieverId]";
 
 import { AccessEnum } from "@/lib/enums.js";
 import automock_utils from "@/lib/automock_utils.fixture";
@@ -18,7 +18,7 @@ export default exportedObject;
 
 const { MANIFESTATION_6, REVIEW_1 } = automock_utils();
 
-export function WrappedInfomediaReviewPage() {
+export function WrappedRetrieverReviewPage() {
   return (
     <div>
       <StoryTitle>Article Page</StoryTitle>
@@ -26,7 +26,7 @@ export function WrappedInfomediaReviewPage() {
     </div>
   );
 }
-WrappedInfomediaReviewPage.story = {
+WrappedRetrieverReviewPage.story = {
   parameters: {
     graphql: {
       resolvers: {
@@ -72,7 +72,7 @@ WrappedInfomediaReviewPage.story = {
                         ],
                         access: [
                           {
-                            __resolveType: AccessEnum.INFOMEDIA_SERVICE,
+                            __resolveType: AccessEnum.RETRIEVER_SERVICE,
                             id: "some-article-id",
                           },
                         ],
@@ -88,7 +88,7 @@ WrappedInfomediaReviewPage.story = {
                         },
 
                         hostPublication: {
-                          title: "Infomedia publication",
+                          title: "Retriever publication",
                           issue: "2005-06-24",
                         },
                         recordCreationDate: "20050627",
@@ -104,19 +104,17 @@ WrappedInfomediaReviewPage.story = {
 
           manifestation: () => null,
 
-          infomedia: (args) =>
+          retriever: (args) =>
             args.variables.id === "some-article-id"
               ? {
                   article: {
                     id: "some-article-id",
-                    headLine: "Some review headline",
-                    subHeadLine: "Some review subHeadLine",
+                    headline: "Some review headline",
+                    subHeadline: "Some review subHeadLine",
                     byLine: "Some byLine",
-                    dateLine: "24. December 2000",
-                    paper: "Some paper",
-                    text: '<p id="p1">Some text given as html ...</p>',
-                    hedLine: "Some hedline",
-                    logo: "<p>Infomedia disclaimer</p>",
+                    publishingDate: "2000-12-24",
+                    sourceName: "Some paper",
+                    fullTextHtml: '<p id="p1">Some text given as html ...</p>',
                   },
                 }
               : null,
@@ -157,7 +155,7 @@ WrappedLectorReviewPage.story = {
                   },
                 }
               : null,
-          infomedia: () => ({}),
+          retriever: () => ({}),
         },
       },
     },
@@ -169,26 +167,23 @@ WrappedLectorReviewPage.story = {
   },
 };
 
-export function WrappedInfomediaArticlePage() {
+export function WrappedRetrieverArticlePage() {
   return (
     <div>
       <StoryTitle>Article Page</StoryTitle>
-      <InfomediaArticlePage />
+      <RetrieverArticlePage />
     </div>
   );
 }
-WrappedInfomediaArticlePage.story = {
+WrappedRetrieverArticlePage.story = {
   parameters: {
     graphql: {
       resolvers: {
         Query: {
           work: (args) =>
             args.variables.workId === "some-work-id" ? {} : null,
-          infomedia: (args) =>
+          retriever: (args) =>
             args.variables.id === "some-article-id" ? {} : null,
-        },
-        InfomediaArticle: {
-          logo: () => "<p>Infomedia disclaimer</p>",
         },
         Subject: {
           __resolveType: () => "SubjectText",
@@ -199,7 +194,7 @@ WrappedInfomediaArticlePage.story = {
     nextRouter: {
       showInfo: true,
       pathname: "/",
-      query: { workId: "some-work-id", infomediaId: "some-article-id" },
+      query: { workId: "some-work-id", retrieverId: "some-article-id" },
     },
   },
 };
@@ -232,10 +227,10 @@ export function ArticlePage() {
   );
 }
 
-export function InfomediaArticle() {
+export function RetrieverArticle() {
   const data = {
     article: {
-      title: "Titel på Infomedia-artikel",
+      title: "Titel på Retriever-artikel",
       subHeadLine: "Undertitel",
       fieldRubrik: "Og en lil' rubrik er her",
       entityCreated: "19. Marts 2021",
@@ -246,36 +241,35 @@ export function InfomediaArticle() {
       category: ["En kategori"],
       creators: [{ name: "Gudrun Jensen" }, { name: "Anders Andersen" }],
       paper: "Computerworld",
-      deliveredBy: "Infomedia",
+      deliveredBy: "Retriever",
       disclaimer: {
-        logo: "/infomedia_logo.svg",
-        text: "Alt materiale i Infomedia er omfattet af lov om ophavsret og må ikke kopieres uden særlig tilladelse.",
+        logo: "/retriever.png",
       },
     },
   };
 
   return (
     <div>
-      <StoryTitle>InfomediaArticle Page</StoryTitle>
+      <StoryTitle>RetrieverArticle Page</StoryTitle>
       <Content data={data} />
     </div>
   );
 }
 
-export function InfomediaArticlePublicData() {
+export function RetrieverArticlePublicData() {
   const data = {
     article: {
-      title: "Titel på Infomedia-artikel",
+      title: "Titel på Retriever-artikel",
       entityCreated: "19. Marts 2021",
       category: ["En kategori"],
       creators: [{ name: "Gudrun Jensen" }, { name: "Anders Andersen" }],
-      deliveredBy: "Infomedia",
+      deliveredBy: "Retriever",
     },
   };
 
   return (
     <div>
-      <StoryTitle>InfomediaArticle Page</StoryTitle>
+      <StoryTitle>RetrieverArticle Page</StoryTitle>
       <Content data={data} />
     </div>
   );

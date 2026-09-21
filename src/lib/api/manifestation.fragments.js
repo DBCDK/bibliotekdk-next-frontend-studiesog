@@ -237,7 +237,7 @@ const accessFragment = `fragment accessFragment on Manifestation {
       loginRequired
       type
     }
-    ... on InfomediaService {
+    ... on RetrieverService {
       id
     }
     ... on Ereol {
