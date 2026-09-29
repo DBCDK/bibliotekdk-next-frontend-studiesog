@@ -324,8 +324,8 @@ export function ReservationButtonNotLoggedIn() {
   const access = [
     {
       pid: "some-pid-1",
-      id: "infomediaUrl",
-      __typename: AccessEnum.INFOMEDIA_SERVICE,
+      id: "retrieverUrl",
+      __typename: AccessEnum.RETRIEVER_SERVICE,
     },
   ];
 
