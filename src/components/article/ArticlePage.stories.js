@@ -114,6 +114,7 @@ WrappedRetrieverReviewPage.story = {
                     byLine: "Some byLine",
                     publishingDate: "2000-12-24",
                     sourceName: "Some paper",
+                    pages: "Some page number",
                     fullTextHtml: '<p id="p1">Some text given as html ...</p>',
                   },
                 }

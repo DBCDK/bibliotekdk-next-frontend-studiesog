@@ -8,7 +8,7 @@ describe("Overview", () => {
       cy.contains("Some paper (Some page number)");
       cy.contains("Læsetid: 1 min.");
       cy.contains("Some topic, Some other topic");
-      cy.contains("24.  dec. 2000");
+      cy.contains("24. dec. 2000");
       cy.contains("Some creator");
       cy.contains("Some review subHeadLine");
       cy.contains("Some text given as html ...");
