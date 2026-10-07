@@ -8,6 +8,9 @@
  * that enables us to use CSS modules. This is configured in next-preset.js.
  */
 
+// Keep Next and Storybook on the same Webpack instance.
+process.env.NEXT_PRIVATE_LOCAL_WEBPACK = "true";
+
 const path = require("path");
 module.exports = {
   stories: ["../src/components/**/*.stories.js"],
@@ -20,7 +23,5 @@ module.exports = {
   docs: {
     autodocs: true,
   },
-  features: {
-    storyStoreV7: false, // 👈 Opt out of on-demand story loading
-  },
+  staticDirs: ["../public"],
 };
