@@ -1,4 +1,3 @@
-import { ApiEnums } from "@/lib/api/api";
 import {
   coverFragment,
   creatorsFragment,
@@ -8,7 +7,6 @@ import {
 
 export function universeBasicInfo({ universeId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query UniverseBasic($universeId: String!) {
       universe(universeId: $universeId) {
         universeId
@@ -25,7 +23,6 @@ export function universeBasicInfo({ universeId }) {
 
 export function universeContent({ universeId, workType, offset, limit }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query UniverseContent($universeId: String!, $workType: WorkTypeEnum, $offset: Int!, $limit: Int!) {
         universe(universeId: $universeId) {
           content(workType: $workType, offset: $offset, limit: $limit) {
@@ -78,7 +75,6 @@ export function universeContent({ universeId, workType, offset, limit }) {
 
 export function universesBasicInfoByWork({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query UniversesBasicInfoByWork($workId: String!) {
       work(id: $workId) {
         universes {
@@ -98,7 +94,6 @@ export function universesBasicInfoByWork({ workId }) {
 
 export function universesByWork({ workId, offset, limit }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query UniversesByWork($workId: String!, $offset: Int, $limit: Int) {
       work(id: $workId) {
         universes {

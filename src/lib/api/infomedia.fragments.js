@@ -3,8 +3,6 @@
  *
  */
 
-import { ApiEnums } from "@/lib/api/api";
-
 /**
  * Informedia id
  *
@@ -13,7 +11,6 @@ import { ApiEnums } from "@/lib/api/api";
  */
 export function infomediaIdFromPid({ pid }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
       query ($pid: String!) {
         manifestation(pid: $pid) {
@@ -41,7 +38,6 @@ export function infomediaIdFromPid({ pid }) {
  */
 export function infomediaArticle({ id }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 4000, // for debugging
     query: `
     query ($id: String!) {

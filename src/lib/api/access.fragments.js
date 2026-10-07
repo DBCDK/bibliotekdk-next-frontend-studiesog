@@ -1,8 +1,5 @@
-import { ApiEnums } from "./api";
-
 export function accessForManifestations({ pids }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query AccessForManifestations($pids: [String!]!) {
       manifestations(pid: $pids) {
         pid

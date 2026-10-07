@@ -3,6 +3,7 @@
  * https://storybook.js.org/docs/react/configure/overview#configure-story-rendering
  */
 import "lazysizes";
+import config from "@/config";
 import "lazysizes/plugins/attrchange/ls.attrchange";
 import "../src/scss/custom-bootstrap.scss";
 import "../src/css/styles.css";
@@ -73,8 +74,10 @@ export const decorators = [
       <GraphQLMocker
         url={
           context?.parameters?.graphql?.url ||
-          "https://fbi-api-staging.k8s.dbc.dk/bibdk21/graphql" ||
-          "https://alfa-api.stg.bibliotek.dk/190101/default/graphql"
+          new URL(
+            `/${config.fbi_api.searchProfile}/graphql`,
+            config.fbi_api.origin
+          ).href
         }
         resolvers={context?.parameters?.graphql?.resolvers}
         beforeFetch={context?.parameters?.graphql?.urlbeforeFetch}

@@ -1,9 +1,7 @@
 import Translate from "@/components/base/translate/Translate";
 import Top from "../../base/top/Top";
 import LinksList from "../LinksList";
-import useBookmarks, {
-  usePopulateBookmarks,
-} from "@/components/hooks/useBookmarks";
+import { usePopulateBookmarks } from "@/components/hooks/useBookmarks";
 // eslint-disable-next-line css-modules/no-unused-class
 import styles from "./MultiReferences.module.css";
 import Text from "@/components/base/text";
@@ -70,7 +68,6 @@ export default function MultiReferences({ context }) {
   const { data: materialsMissingEdition, isLoading } = usePopulateBookmarks(
     bookmarksMissingEdition
   );
-  const { bookmarks } = useBookmarks();
   const [activeMaterialChoices, setActiveMaterialChoices] = useState(
     bookmarksMissingEdition
   );
@@ -234,7 +231,6 @@ export default function MultiReferences({ context }) {
       {isSingleReference && (
         <SingleReference
           bookmarkInList={materials}
-          bookmarks={bookmarks}
           //chosenPid={activeMaterialChoices?.[0]?.chosenPid} //WHAT DO I NEED chosenPid for?
         />
       )}

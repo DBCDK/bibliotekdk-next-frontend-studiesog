@@ -1,5 +1,3 @@
-import { ApiEnums } from "@/lib/api/api";
-
 import {
   creatorsFragment,
   materialTypesFragment,
@@ -35,7 +33,6 @@ export function inspiration({ filters = [], limit = 10 } = {}) {
   }
 
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `query ($limit: Int!, $filters: [CategoryFilterInput!]) {
         inspiration {
@@ -99,7 +96,6 @@ export function categories({ filters = [] } = {}) {
   }
 
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `query ($filters: [CategoryFilterInput!]) {
         inspiration {

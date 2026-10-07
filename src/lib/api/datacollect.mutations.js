@@ -5,7 +5,6 @@
 import getConfig from "next/config";
 import { v4 as uuidv4 } from "uuid";
 import { SuggestTypeEnum } from "@/lib/enums";
-import { ApiEnums } from "@/lib/api/api";
 
 const config = getConfig();
 
@@ -28,7 +27,6 @@ export function collectRecommenderClick({
   recommender_shown_recommendations,
 }) {
   return {
-    apiUrl: ApiEnums.FBI_API_SIMPLESEARCH,
     query: `mutation ($input: DataCollectInput!) {
       data_collect(input: $input)
     }
@@ -57,7 +55,6 @@ export function collectRecommenderClick({
  */
 export function collectSuggestPresented({ query, suggestions }) {
   return {
-    apiUrl: ApiEnums.FBI_API_SIMPLESEARCH,
     query: `mutation ($input: DataCollectInput!) {
       data_collect(input: $input)
     }
@@ -92,7 +89,6 @@ export function collectSuggestPresented({ query, suggestions }) {
  */
 export function collectSuggestClick({ query, suggestion, suggest_query_hit }) {
   return {
-    apiUrl: ApiEnums.FBI_API_SIMPLESEARCH,
     query: `mutation ($input: DataCollectInput!) {
       data_collect(input: $input)
     }
@@ -130,7 +126,6 @@ export function collectSearch({
   search_offset,
 }) {
   return {
-    apiUrl: ApiEnums.FBI_API_SIMPLESEARCH,
     query: `mutation ($input: DataCollectInput!) {
       data_collect(input: $input)
     }
@@ -162,7 +157,6 @@ export function collectSearchWorkClick({
   search_query_work,
 }) {
   return {
-    apiUrl: ApiEnums.FBI_API_SIMPLESEARCH,
     query: `mutation ($input: DataCollectInput!) {
       data_collect(input: $input)
     }
@@ -190,7 +184,6 @@ export function collectSearchWorkClick({
  */
 export function collectSearchFeedback({ thumbs, query, reason }) {
   return {
-    apiUrl: ApiEnums.FBI_API_SIMPLESEARCH,
     query: `mutation ($input: DataCollectInput!) {
       data_collect(input: $input)
     }

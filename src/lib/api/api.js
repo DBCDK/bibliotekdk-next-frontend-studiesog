@@ -18,6 +18,13 @@ const config =
 
 export const APIMockContext = createContext();
 
+/** Resolve the operation role to its configured API search profile. */
+export function getSearchProfile(profile = "search") {
+  return profile === "present"
+    ? config.fbi_api.presentProfile
+    : config.fbi_api.searchProfile;
+}
+
 /**
  * Converts a query object to stringified key
  *
@@ -28,7 +35,11 @@ export const APIMockContext = createContext();
 export function generateKey(query) {
   // Consider hashing the string to make
   // keys smaller
-  return JSON.stringify(query);
+  return JSON.stringify({
+    ...query,
+    profile: query.profile || "search",
+    searchProfile: getSearchProfile(query.profile),
+  });
 }
 
 let debug = false;
@@ -50,25 +61,15 @@ export async function fetcher(
   xForwardedFor = null,
   extra = {}
 ) {
-  const {
-    apiUrl: apiUrlFromQuery,
-    query,
-    variables,
-    delay,
-    accessToken,
-  } = typeof queryStr === "string" ? JSON.parse(queryStr) : queryStr;
+  const { profile, query, variables, delay, accessToken } =
+    typeof queryStr === "string" ? JSON.parse(queryStr) : queryStr;
 
   const { uniqueVisitorId, statistics, branchId } = extra;
 
-  // Calculate apiUrl
-  const apiUrl =
-    apiUrlFromQuery && config[apiUrlFromQuery]?.url
-      ? config[apiUrlFromQuery]?.url
-      : config.fbi_api.url;
-
-  const parsedUrl = new URL(apiUrl);
-
-  const rootUrl = `${parsedUrl.protocol}//${parsedUrl.host}`;
+  const rootUrl = new URL(config.fbi_api.origin).origin;
+  const url = `${rootUrl}/${branchId ? `${branchId}/` : ""}${getSearchProfile(
+    profile
+  )}/graphql`;
 
   const headers = {
     "Content-Type": "application/json",
@@ -86,17 +87,14 @@ export async function fetcher(
   }
 
   const start = Date.now();
-  const res = await fetch(
-    `${rootUrl}/${branchId ? `${branchId}/` : ""}StudieSoeg/graphql`,
-    {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        query,
-        variables,
-      }),
-    }
-  );
+  const res = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  });
 
   if (debug && typeof window !== "undefined") {
     const normalStyle = "text-decoration: none;font-weight:normal;";
@@ -288,8 +286,3 @@ function useKeyGenerator() {
   return (query) =>
     accessToken && query && generateKey({ ...query, accessToken } || "");
 }
-
-export const ApiEnums = Object.freeze({
-  FBI_API: "fbi_api",
-  FBI_API_SIMPLESEARCH: "fbi_api_simplesearch",
-});

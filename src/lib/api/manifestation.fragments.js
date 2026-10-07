@@ -2,7 +2,6 @@
  * @file Contains GraphQL queries all taking a pid (manifestion) as variable
  *
  */
-import { ApiEnums } from "@/lib/api/api";
 
 import {
   creatorsFragment,
@@ -13,7 +12,6 @@ import {
 
 export function refWorks({ pids }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query ($pids: [String!]!) {
       refWorks(pids:$pids)
@@ -26,7 +24,6 @@ export function refWorks({ pids }) {
 
 export function ris(pids) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query ($pids: [String!]!) {
       ris(pids:$pids)
       monitor(name: "bibdknext_manifestation_ris")
@@ -41,7 +38,6 @@ export function manifestationFullManifestation({ pid }) {
     return null;
   }
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query manifestation($pid: String!) {
       manifestation(pid: $pid) {
         ...manifestationCoverFragment
@@ -65,7 +61,6 @@ export function manifestationFullManifestation({ pid }) {
 
 export function editionManifestations({ pid }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query editionManifestations($pid: [String!]!) {
       manifestations(pid: $pid) {
         pid
@@ -128,7 +123,6 @@ export function editionManifestations({ pid }) {
 
 export function alternativesManifestations({ pid }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query alternativesManifestations($pid: [String!]!) {
       manifestations(pid: $pid) {
@@ -161,7 +155,6 @@ export function alternativesManifestations({ pid }) {
 
 export function reservationButtonManifestations({ pid }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query reservationButtonManifestations($pid: [String!]!) {
       manifestations(pid: $pid) {
@@ -187,7 +180,6 @@ export function reservationButtonManifestations({ pid }) {
 
 export function manifestationsForAccessFactory({ pid }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query orderPageManifestations($pid: [String!]!) {
       manifestations(pid: $pid) {
@@ -209,7 +201,6 @@ export function manifestationForLectorReview({ pid }) {
     return null;
   }
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query manifestationForLectorReview($pid: String!) {
       manifestation(pid: $pid) {

@@ -4,7 +4,6 @@
  */
 
 import { FilterTypeEnum } from "@/lib/enums";
-import { ApiEnums } from "@/lib/api/api";
 
 import {
   creatorsFragment,
@@ -20,7 +19,6 @@ import {
  */
 export function hitcount({ q, filters = {} }) {
   return {
-    apiUrl: ApiEnums.FBI_API_SIMPLESEARCH,
     // delay: 1000, // for debugging
     query: `
     query ($q: SearchQueryInput!, $filters: SearchFiltersInput) {
@@ -37,11 +35,10 @@ export function hitcount({ q, filters = {} }) {
  * Suggestions for alternative spellings
  * @param q
  * @param limit
- * @returns {{variables: {q, limit: number}, apiUrl: string, slowThreshold: number, query: string}}
+ * @returns {{variables: {q, limit: number}, slowThreshold: number, query: string}}
  */
 export function didYouMean({ q, limit = 5 }) {
   return {
-    apiUrl: ApiEnums.FBI_API_SIMPLESEARCH,
     query: `
       query didyoumean ($q: SearchQueryInput!, $limit: Int!) {
         search(q: $q) {
@@ -73,7 +70,6 @@ export function all({
   search_exact = false,
 }) {
   return {
-    apiUrl: ApiEnums.FBI_API_SIMPLESEARCH,
     // delay: 1000, // for debugging
     query: `
     query all ($q: SearchQueryInput!, $filters: SearchFiltersInput, $offset: Int!, $limit: PaginationLimitScalar!, $search_exact: Boolean) {
@@ -172,7 +168,6 @@ export function facets({
     facets = facets.map((f) => f.toUpperCase());
   }
   return {
-    apiUrl: ApiEnums.FBI_API_SIMPLESEARCH,
     // delay: 1000, // for debugging
     query: `
     query ($q: SearchQueryInput!, $filters: SearchFiltersInput, $facets: [FacetFieldEnum!]!) {

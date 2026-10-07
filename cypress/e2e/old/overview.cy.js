@@ -8,6 +8,28 @@ describe("Overview", () => {
       cy.visit("/iframe.html?id=work-overview--overview-wrapped");
     });
 
+    it("toggles a bookmark after the material selector has loaded", () => {
+      cy.get("[data-cy=tag-e-bog]").should("be.visible");
+      cy.get("[data-cy=bookmark-button]").click();
+      cy.get("[data-cy=bookmark-material-selector-dropdown]")
+        .should("be.visible")
+        .find(".dropdown-item")
+        .first()
+        .as("bookmarkChoice");
+      cy.get("@bookmarkChoice").click();
+      cy.window().should((window) => {
+        expect(
+          JSON.parse(window.localStorage.getItem("bookmarks"))
+        ).to.have.length(1);
+      });
+      cy.get("@bookmarkChoice").click();
+      cy.window().should((window) => {
+        expect(
+          JSON.parse(window.localStorage.getItem("bookmarks"))
+        ).to.have.length(0);
+      });
+    });
+
     it.skip(`have basic functionining functionality`, () => {
       cy.contains("Overview - bog", { timeout: 15000 });
 

@@ -1,5 +1,4 @@
 import { lang } from "@/components/base/translate";
-import { ApiEnums } from "@/lib/api/api";
 
 import {
   creatorsFragment,
@@ -17,7 +16,6 @@ import {
  */
 export function userRights() {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `
     query UserRights {
@@ -41,7 +39,6 @@ export function userRights() {
  */
 export function userAgencies() {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `
     query UserAgencies {
@@ -66,7 +63,6 @@ export function userAgencies() {
  */
 export function basic() {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `
     query BasicUser {
@@ -195,7 +191,6 @@ export function basic() {
  */
 export function branchesForUser() {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `
     query  {
@@ -220,7 +215,6 @@ export function branchesForUser() {
 
 export function orderPolicy({ pids }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `query orderPolicy ($language: LanguageCodeEnum!, $pids: [String!]! ) {
       user {
@@ -263,7 +257,6 @@ export function orderPolicy({ pids }) {
 
 export function borrowerStatus() {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `
     query  {
@@ -287,7 +280,6 @@ export function borrowerStatus() {
  */
 export function extendedData() {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `
     query  {
@@ -307,7 +299,6 @@ export function extendedData() {
  */
 export function savedSearchesQuery({ offset, limit }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query savedSearches($offset: Int!, $limit: PaginationLimitScalar! ) { 
         user {
           savedSearches(offset: $offset, limit: $limit, ) {
@@ -332,7 +323,6 @@ export function savedSearchesQuery({ offset, limit }) {
  */
 export function getSavedSearchByCql({ cql }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query savedSearchByCql($cql: String! ) { 
         user {
           savedSearchByCql(cql: $cql) {

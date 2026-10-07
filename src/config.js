@@ -6,15 +6,13 @@ const config = {
   port: process.env.PORT || 3000,
   externalBaseUrl: process.env.EXTERNAL_BASE_URL || "https://bibliotek.dk",
   fbi_api: {
-    url:
-      process.env.NEXT_PUBLIC_FBI_API_URL ||
-      "https://fbi-api-staging.k8s.dbc.dk/SimpleSearch/graphql",
-    timeout: process.env.API_TIMEOUT_MS || 150,
-  },
-  fbi_api_bibdk21: {
-    url:
-      process.env.NEXT_PUBLIC_FBI_API_BIBDK21_URL ||
-      "https://fbi-api-staging.k8s.dbc.dk/bibdk21/graphql",
+    origin:
+      process.env.NEXT_PUBLIC_FBI_API_ORIGIN ||
+      "https://fbi-api-staging.k8s.dbc.dk",
+    presentProfile:
+      process.env.NEXT_PUBLIC_FBI_API_PRESENT_PROFILE || "Huskeliste",
+    searchProfile:
+      process.env.NEXT_PUBLIC_FBI_API_SEARCH_PROFILE || "StudieSoeg",
     timeout: process.env.API_TIMEOUT_MS || 150,
   },
   backend: {
