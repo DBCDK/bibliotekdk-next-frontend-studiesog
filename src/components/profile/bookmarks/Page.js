@@ -106,7 +106,6 @@ const BookmarkPage = () => {
     count,
     isLoading: bookmarsDataLoading,
     error: bookmarksError,
-    retry,
   } = useBookmarks({ list: true });
 
   const receipt =
@@ -380,14 +379,7 @@ const BookmarkPage = () => {
       <div ref={scrollToElement} />
       {bookmarksError && (
         <ErrorRow
-          text={
-            <>
-              {Translate({ context: "receipt", label: "errorOccured" })}{" "}
-              <Button size="small" onClick={retry}>
-                {Translate({ context: "general", label: "retry" })}
-              </Button>
-            </>
-          }
+          text={Translate({ context: "receipt", label: "errorOccured" })}
         />
       )}
       {/*

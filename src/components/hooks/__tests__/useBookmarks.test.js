@@ -136,6 +136,7 @@ describe("bookmark covers", () => {
 let root;
 let container;
 let current;
+let rerender;
 let fetch;
 let post;
 let items;
@@ -152,7 +153,7 @@ async function mount(options = { list: true }) {
     current = useBookmarks(options);
     return null;
   }
-  await act(async () => {
+  rerender = () => {
     root.render(
       <SWRConfig
         value={{
@@ -164,7 +165,8 @@ async function mount(options = { list: true }) {
         <Harness />
       </SWRConfig>
     );
-  });
+  };
+  await act(async () => rerender());
   await flush();
 }
 
@@ -454,7 +456,7 @@ test("switching from mobile load-more to desktop does not duplicate pages", asyn
   await act(async () => current.setCurrentPage(2));
   await flush();
   useBreakpoint.mockReturnValue("lg");
-  await act(async () => current.retry());
+  await act(async () => rerender());
   await flush();
   expect(current.paginatedBookmarks).toHaveLength(1);
 });
