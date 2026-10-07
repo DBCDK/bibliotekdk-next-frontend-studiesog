@@ -2,7 +2,10 @@ describe("Localizations", () => {
   it("Show error message when temporarily closed", () => {
     cy.visit("/iframe.html?id=localizations-base--localizations-base-flow");
     cy.contains("Localizations", { timeout: 15000 }).should("exist");
-    cy.get("a", { timeout: 10000 }).first().should("exist").click();
+    cy.get("#storybook-root a", { timeout: 10000 })
+      .first()
+      .should("exist")
+      .click();
 
     cy.contains("Se hvor materialet er på hylden");
 
@@ -21,7 +24,10 @@ describe("Localizations", () => {
   it("Show holdings on shelf", () => {
     cy.visit("/iframe.html?id=localizations-base--localizations-base-flow");
     cy.contains("Localizations", { timeout: 15000 }).should("exist");
-    cy.get("a", { timeout: 10000 }).first().should("exist").click();
+    cy.get("#storybook-root a", { timeout: 10000 })
+      .first()
+      .should("exist")
+      .click();
 
     cy.contains("Se hvor materialet er på hylden");
 
