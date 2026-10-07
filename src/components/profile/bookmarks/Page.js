@@ -5,7 +5,6 @@ import styles from "./Bookmark.module.css";
 import Text from "@/components/base/text";
 import Button from "@/components/base/button";
 import MaterialRow from "../materialRow/MaterialRow";
-import ErrorRow from "../errorRow/ErrorRow";
 import IconButton from "@/components/base/iconButton";
 import {
   useEffect,
@@ -377,11 +376,6 @@ const BookmarkPage = () => {
       })}
     >
       <div ref={scrollToElement} />
-      {bookmarksError && (
-        <ErrorRow
-          text={Translate({ context: "receipt", label: "errorOccured" })}
-        />
-      )}
       {/*
         Mounts bookmark ref to get the online availability status of the marked bookmark
         */}
