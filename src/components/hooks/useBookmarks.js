@@ -187,9 +187,10 @@ const useBookmarksCore = ({
             ...bookmark,
             isAvailableInSearchProfile: isBookmarkResolved(bookmark),
           }));
-          if (
-            pageItems.some((bookmark) => !bookmark.isAvailableInSearchProfile)
-          ) {
+          const needsFallbackMaterials = pageItems.some(
+            (bookmark) => !bookmark.isAvailableInSearchProfile
+          );
+          if (needsFallbackMaterials) {
             const fallback = await fetch({ ...query, profile: "present" });
             const fallbackResponse = fallback?.data?.patron?.bookmarks;
             if (fallback?.errors?.length || fallbackResponse?.status !== "OK") {
@@ -203,9 +204,11 @@ const useBookmarksCore = ({
             // Keep search-profile order and identity, even if the list changed between calls.
             pageItems = pageItems.map((bookmark) => {
               const fallbackBookmark = byId.get(bookmark.id);
-              return !bookmark.isAvailableInSearchProfile &&
+              const canUseFallbackMaterial =
+                !bookmark.isAvailableInSearchProfile &&
                 fallbackBookmark &&
-                getBookmarkKey(fallbackBookmark) === getBookmarkKey(bookmark)
+                getBookmarkKey(fallbackBookmark) === getBookmarkKey(bookmark);
+              return canUseFallbackMaterial
                 ? { ...bookmark, material: fallbackBookmark.material }
                 : bookmark;
             });
@@ -348,14 +351,12 @@ const useBookmarksCore = ({
         })
       );
       await refreshBookmarks();
-      if (
-        result.data?.patron?.addBookmarks?.items?.some(
-          (item) =>
-            ["OK", "ALREADY_EXISTS"].includes(item.status) &&
-            getBookmarkKey(item) === getBookmarkKey(bookmark)
-        )
-      )
-        collect.collectAddBookmark(value);
+      const isAddConfirmed = result.data?.patron?.addBookmarks?.items?.some(
+        (item) =>
+          ["OK", "ALREADY_EXISTS"].includes(item.status) &&
+          getBookmarkKey(item) === getBookmarkKey(bookmark)
+      );
+      if (isAddConfirmed) collect.collectAddBookmark(value);
       else setMutationError(new Error("Could not add bookmark"));
       if (result.error) setMutationError(result.error);
     } else {

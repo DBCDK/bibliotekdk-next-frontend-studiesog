@@ -190,14 +190,13 @@ const BookmarkPage = () => {
     setCheckboxList(newList);
   };
 
+  const hasUnavailableSelection = checkboxList.some(
+    (bookmark) =>
+      !bookmark.hasMaterial || bookmark.isAvailableInSearchProfile === false
+  );
+
   const onOrderManyClick = () => {
-    if (
-      checkboxList.some(
-        (bookmark) =>
-          !bookmark.hasMaterial || bookmark.isAvailableInSearchProfile === false
-      )
-    )
-      return;
+    if (hasUnavailableSelection) return;
     const orders = checkboxList?.map((order) => ({
       pids: order?.manifestations?.map((manifestation) => manifestation?.pid),
       bookmarkKey: order?.key,
@@ -208,13 +207,7 @@ const BookmarkPage = () => {
   };
 
   const onGetReferencesClick = () => {
-    if (
-      checkboxList.some(
-        (bookmark) =>
-          !bookmark.hasMaterial || bookmark.isAvailableInSearchProfile === false
-      )
-    )
-      return;
+    if (hasUnavailableSelection) return;
     modal.push("multiReferences", {
       materials: checkboxList,
     });
@@ -323,15 +316,11 @@ const BookmarkPage = () => {
     checkboxList.some((item) => item.key === bookmark.key)
   );
   const isNothingSelected = checkboxList.length === 0;
-  const hasUnavailableSelection = checkboxList.some(
-    (bookmark) =>
-      !bookmark.hasMaterial || bookmark.isAvailableInSearchProfile === false
-  );
 
-  if (
-    (bookmarsDataLoading || isPopulateLoading) &&
-    !populatedBookmarks.length
-  ) {
+  const isInitialLoading =
+    (bookmarsDataLoading || isPopulateLoading) && !populatedBookmarks.length;
+
+  if (isInitialLoading) {
     return (
       <ProfileLayout
         title={Translate({
