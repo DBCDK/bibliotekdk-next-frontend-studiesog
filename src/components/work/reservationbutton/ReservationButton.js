@@ -23,7 +23,7 @@ import useAgencyFromSubdomain from "@/components/hooks/useSubdomainToAgency";
 function TextAboveButton({ access, isAuthenticated }) {
   return (
     (access?.[0]?.loginRequired ||
-      access?.[0]?.__typename === "InfomediaService") &&
+      access?.[0]?.__typename === "RetrieverService") &&
     !isAuthenticated && (
       <Text
         type="text3"
