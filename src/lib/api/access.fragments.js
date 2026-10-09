@@ -22,7 +22,7 @@ export function accessForManifestations({ pids }) {
                 type
                 status
               }
-              ... on InfomediaService {
+              ... on RetrieverService {
                 id
               }
               ... on Ereol {

@@ -98,6 +98,10 @@
 .disclaimer > p {
   margin-top: var(--pt2);
 }
+.disclaimer img {
+  width: 297px;
+  height: auto;
+}
 
 @media (min-width: 992px) {
   .noImage .right {
