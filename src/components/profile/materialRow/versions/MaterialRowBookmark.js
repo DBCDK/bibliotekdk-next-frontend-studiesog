@@ -60,7 +60,7 @@ const BookmarkColumn = ({
             textType="text3"
             style={sharedStyles.bookmarkOrderedIcon}
           />
-        ) : (
+        ) : selectedPids?.length > 0 ? (
           <ReservationButtonWrapper
             workId={workId}
             selectedPids={selectedPids}
@@ -71,7 +71,7 @@ const BookmarkColumn = ({
             handleOrderFinished={handleOrderFinished}
             bookmarkKey={bookmarkKey}
           />
-        )}
+        ) : null}
         {showFailedAtCreation && (
           <Text type="text3" className={styles.bookmarkOrderFailed}>
             {Translate({
@@ -109,6 +109,9 @@ const MaterialRowBookmark = ({
   edition,
   onBookmarkDelete,
   allManifestations,
+  materialType,
+  hasMaterial = !!allManifestations?.length,
+  isAvailableInSearchProfile = true,
   onSelect,
   hasCheckbox,
   showSuccessfullyOrdered = false,
@@ -130,17 +133,20 @@ const MaterialRowBookmark = ({
     }
   };
 
-  const { flatMaterialTypes } = manifestationMaterialTypeFactory([
-    allManifestations?.[0],
-  ]);
+  const rowId = encodeURIComponent(bookmarkKey || materialId);
+  const { flatMaterialTypes } = manifestationMaterialTypeFactory(
+    allManifestations?.length ? [allManifestations[0]] : []
+  );
+  const materialLabel =
+    materialType || formatMaterialTypesToPresentation(flatMaterialTypes?.[0]);
 
   return (
     <article
-      key={"article" + materialId}
+      key={bookmarkKey || materialId}
       role="checkbox"
       aria-checked={isSelected}
       tabIndex="0"
-      data-id={materialId}
+      data-id={bookmarkKey || materialId}
       onClick={onCheckboxClick}
       onKeyDown={(e) => {
         if (e.key === "Enter") {
@@ -158,8 +164,8 @@ const MaterialRowBookmark = ({
         <div className={sharedStyles.checkboxContainer}>
           <Checkbox
             checked={isSelected}
-            id={`material-row-${materialId}`}
-            ariaLabelledBy={`material-title-${materialId}`}
+            id={`material-row-${rowId}`}
+            ariaLabelledBy={`material-title-${rowId}`}
             ariaLabel={title}
             tabIndex="-1"
             readOnly
@@ -175,7 +181,9 @@ const MaterialRowBookmark = ({
         )}
         <div className={sharedStyles.textContainer}>
           <ConditionalWrapper
-            condition={!!title && !!materialId}
+            condition={
+              !!title && !!workId && hasMaterial && isAvailableInSearchProfile
+            }
             wrapper={(children) => (
               <Link
                 border={{
@@ -201,7 +209,7 @@ const MaterialRowBookmark = ({
             )}
           >
             {title ? (
-              <Title type="text1" tag="h3" id={`material-title-${materialId}`}>
+              <Title type="text1" tag="h3" id={`material-title-${rowId}`}>
                 {title}
               </Title>
             ) : (
@@ -216,7 +224,7 @@ const MaterialRowBookmark = ({
               {creator}
             </Text>
           )}
-          {flatMaterialTypes && (
+          {materialLabel && (
             <Text
               type="text3"
               className={cx(
@@ -225,7 +233,7 @@ const MaterialRowBookmark = ({
               )}
               dataCy="materialtype-and-creationyear"
             >
-              {formatMaterialTypesToPresentation(flatMaterialTypes?.[0])}
+              {materialLabel}
               {edition && <span>{edition}</span>}
             </Text>
           )}
@@ -238,7 +246,9 @@ const MaterialRowBookmark = ({
           pid={pid}
           flatMaterialTypes={flatMaterialTypes}
           onBookmarkDelete={onBookmarkDelete}
-          relevantManifestations={allManifestations}
+          relevantManifestations={
+            isAvailableInSearchProfile ? allManifestations : []
+          }
           showFailedAtCreation={showFailedAtCreation}
           showSuccessfullyOrdered={showSuccessfullyOrdered}
           handleOrderFinished={handleOrderFinished}

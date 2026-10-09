@@ -22,7 +22,6 @@ import List from "@/components/base/forms/list";
 import Pagination from "@/components/search/pagination/Pagination";
 import { createEditionText } from "@/components/work/details/utils/details.utils";
 import Skeleton from "@/components/base/skeleton/Skeleton";
-import { getMaterialTypeForPresentation } from "@/lib/manifestationFactoryUtils";
 import { getSessionStorageItem, setSessionStorageItem } from "@/lib/utils";
 import { useAnalyzeMaterial } from "@/components/hooks/useAnalyzeMaterial";
 import { useOrderFlow } from "@/components/hooks/order";
@@ -97,7 +96,6 @@ const BookmarkPage = () => {
   const modal = useModal();
   const itemsRef = useRef([]);
   const {
-    bookmarks: allBookmarks,
     paginatedBookmarks: bookmarksData,
     setSortBy,
     deleteBookmarks,
@@ -106,7 +104,8 @@ const BookmarkPage = () => {
     setCurrentPage,
     count,
     isLoading: bookmarsDataLoading,
-  } = useBookmarks();
+    error: bookmarksError,
+  } = useBookmarks({ list: true });
 
   const receipt =
     modal?.stack?.find((item) => item.id === "multireceipt")?.context || {};
@@ -147,10 +146,14 @@ const BookmarkPage = () => {
 
   useEffect(() => {
     //if there is one item in the last page and the user deletes that, we should go back to the previous page.
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(totalPages);
+    if (
+      !bookmarsDataLoading &&
+      !bookmarksError &&
+      currentPage > Math.max(1, totalPages)
+    ) {
+      setCurrentPage(Math.max(1, totalPages));
     }
-  }, [totalPages]);
+  }, [totalPages, bookmarsDataLoading, bookmarksError]);
 
   useEffect(() => {
     let savedValue = getSessionStorageItem("sortByValue");
@@ -187,7 +190,13 @@ const BookmarkPage = () => {
     setCheckboxList(newList);
   };
 
+  const hasUnavailableSelection = checkboxList.some(
+    (bookmark) =>
+      !bookmark.hasMaterial || bookmark.isAvailableInSearchProfile === false
+  );
+
   const onOrderManyClick = () => {
+    if (hasUnavailableSelection) return;
     const orders = checkboxList?.map((order) => ({
       pids: order?.manifestations?.map((manifestation) => manifestation?.pid),
       bookmarkKey: order?.key,
@@ -198,6 +207,7 @@ const BookmarkPage = () => {
   };
 
   const onGetReferencesClick = () => {
+    if (hasUnavailableSelection) return;
     modal.push("multiReferences", {
       materials: checkboxList,
     });
@@ -209,26 +219,23 @@ const BookmarkPage = () => {
   };
 
   const onSelectAll = () => {
-    const hasUnselectedElements = checkboxList.length < allBookmarks.length;
-    if (hasUnselectedElements)
-      setCheckboxList(
-        allBookmarks.map((bm) => {
-          const bookmarkData = populatedBookmarks.find(
-            (pbm) => pbm.key === bm.key
-          );
-          return {
-            ...bookmarkData,
-            key: bm.key,
-            materialId: bm.materialId,
-            workId: bm.workId,
-            materialType: bm.materialType,
-            bookmarkId: bm.bookmarkId,
-          };
-        })
-      );
-    else {
-      setCheckboxList([]);
-    }
+    const visibleKeys = new Set(
+      populatedBookmarks.map((bookmark) => bookmark.key)
+    );
+    const selectedKeys = new Set(checkboxList.map((bookmark) => bookmark.key));
+    const allVisibleSelected = populatedBookmarks.every((bookmark) =>
+      selectedKeys.has(bookmark.key)
+    );
+    setCheckboxList(
+      allVisibleSelected
+        ? checkboxList.filter((bookmark) => !visibleKeys.has(bookmark.key))
+        : [
+            ...checkboxList,
+            ...populatedBookmarks.filter(
+              (bookmark) => !selectedKeys.has(bookmark.key)
+            ),
+          ]
+    );
   };
 
   const onDropdownClick = (idx) => {
@@ -266,30 +273,11 @@ const BookmarkPage = () => {
     }
   };
 
-  const onDeleteSelected = () => {
-    const toDelete = allBookmarks
-      .filter(
-        (bm) => checkboxList.findIndex((item) => item.key === bm.key) > -1
-      )
-      .map((bm) => ({
-        bookmarkId: bm.bookmarkId,
-        key: bm.key,
-        materialType: bm.materialType,
-      }));
-    //update checkboxList
-    toDelete.forEach((bookmarkToDelete) => {
-      if (
-        checkboxList.indexOf(
-          (bm) => bm.bookmarkId === bookmarkToDelete.bookmarkId
-        )
-      ) {
-        setCheckboxList((prev) =>
-          prev.filter((bm) => bm.bookmarkId !== bookmarkToDelete.bookmarkId)
-        );
-      }
-    });
-
-    deleteBookmarks(toDelete);
+  const onDeleteSelected = async () => {
+    const deletedKeys = await deleteBookmarks(checkboxList);
+    setCheckboxList((previous) =>
+      previous.filter((bookmark) => !deletedKeys.includes(bookmark.key))
+    );
   };
   /**
    * scrolls to the top of the page
@@ -308,30 +296,31 @@ const BookmarkPage = () => {
     return createEditionText(bookmark?.manifestations?.[0]);
   };
   const onPageChange = async (newPage) => {
-    const isSmallScreen = breakpoint === "xs";
-
     if (newPage > totalPages) {
       newPage = totalPages;
     }
-    if (!isSmallScreen) {
+    if (!isMobile) {
       scrollToTop();
     }
     setCurrentPage(newPage);
   };
 
-  const onDeleteBookmark = (bookmark) => {
-    if (checkboxList.indexOf((bm) => bm.bookmarkId === bookmark.bookmarkId)) {
-      setCheckboxList((prev) =>
-        prev.filter((bm) => bm.bookmarkId !== bookmark.bookmarkId)
-      );
-    }
-    deleteBookmarks([{ bookmarkId: bookmark.bookmarkId, key: bookmark.key }]);
+  const onDeleteBookmark = async (bookmark) => {
+    const deletedKeys = await deleteBookmarks([bookmark]);
+    setCheckboxList((previous) =>
+      previous.filter((item) => !deletedKeys.includes(item.key))
+    );
   };
 
-  const isAllSelected = checkboxList?.length === allBookmarks?.length;
+  const isAllSelected = populatedBookmarks.every((bookmark) =>
+    checkboxList.some((item) => item.key === bookmark.key)
+  );
   const isNothingSelected = checkboxList.length === 0;
 
-  if (bookmarsDataLoading || isPopulateLoading) {
+  const isInitialLoading =
+    (bookmarsDataLoading || isPopulateLoading) && !populatedBookmarks.length;
+
+  if (isInitialLoading) {
     return (
       <ProfileLayout
         title={Translate({
@@ -380,13 +369,18 @@ const BookmarkPage = () => {
         Mounts bookmark ref to get the online availability status of the marked bookmark
         */}
       <>
-        {checkboxList.map((item, idx) => (
-          <AnalyseItemAvailability
-            key={`checkedItem-ref-${idx}`}
-            bookmark={item}
-            ref={(el) => (itemsRef.current[idx] = el)}
-          />
-        ))}
+        {checkboxList
+          .filter(
+            (item) =>
+              item.hasMaterial && item.isAvailableInSearchProfile !== false
+          )
+          .map((item, idx) => (
+            <AnalyseItemAvailability
+              key={`checkedItem-ref-${idx}`}
+              bookmark={item}
+              ref={(el) => (itemsRef.current[idx] = el)}
+            />
+          ))}
       </>
 
       {activeStickyButton ? (
@@ -410,6 +404,10 @@ const BookmarkPage = () => {
             type="primary"
             className={styles.stickyButton}
             onClick={onStickyClick}
+            disabled={
+              isNothingSelected ||
+              (activeStickyButton !== "2" && hasUnavailableSelection)
+            }
           >
             {getStickyButtonText()}
           </Button>
@@ -497,28 +495,20 @@ const BookmarkPage = () => {
       )}
 
       <div className={styles.listContainer}>
-        {populatedBookmarks?.map((bookmark, idx) => {
-          const corporationCreator =
-            bookmark?.manifestations?.[0]?.ownerWork.creators?.filter(
-              (creator) => creator?.__typename === "Corporation"
-            )[0]?.display;
-
+        {populatedBookmarks?.map((bookmark) => {
           return (
             <MaterialRow
-              key={`bookmark-list-${idx}`}
-              bookmarkKey={bookmark?.key}
+              key={bookmark.key}
+              bookmarkKey={bookmark.key}
               hasCheckbox={!isMobile || activeStickyButton !== null}
-              title={bookmark?.manifestations?.[0]?.titles?.full?.[0] || ""}
-              titles={bookmark?.manifestations?.[0]?.titles}
-              creator={
-                corporationCreator ||
-                bookmark?.manifestations?.[0]?.ownerWork.creators[0]?.display
-              }
-              creators={bookmark?.manifestations?.[0]?.ownerWork.creators}
-              materialType={getMaterialTypeForPresentation(
-                bookmark.manifestations?.[0]?.materialTypes
-              )}
-              image={bookmark?.manifestations?.[0]?.cover?.thumbnail}
+              title={bookmark.title}
+              titles={bookmark.titles}
+              creator={bookmark.creator}
+              creators={bookmark.creators}
+              materialType={bookmark.materialTypeLabel}
+              image={bookmark.image}
+              hasMaterial={bookmark.hasMaterial}
+              isAvailableInSearchProfile={bookmark.isAvailableInSearchProfile}
               id={bookmark?.materialId}
               edition={constructEditionText(bookmark)}
               workId={bookmark?.workId}
@@ -545,6 +535,8 @@ const BookmarkPage = () => {
       </div>
       {totalPages > 1 && (
         <Pagination
+          forceMobileView={isMobile}
+          isLoading={bookmarsDataLoading}
           numPages={totalPages}
           currentPage={currentPage}
           className={styles.pagination}

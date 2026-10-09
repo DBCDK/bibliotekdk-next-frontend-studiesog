@@ -1,5 +1,4 @@
 import { lang } from "@/components/base/translate";
-import { ApiEnums } from "@/lib/api/api";
 
 /**
  * @file Contains GraphQL queries for fetching branches
@@ -12,7 +11,6 @@ import { ApiEnums } from "@/lib/api/api";
  */
 export function branchUserParameters({ branchId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `
     query BranchUserParameters($branchId: String!, $language: LanguageCodeEnum!) {
@@ -62,7 +60,6 @@ export function branchUserParameters({ branchId }) {
  */
 export function branchHoldings({ branchId, pids }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query BranchHoldings($branchId: String!, $pids: [String]){
       branches(branchId:$branchId){
@@ -116,7 +113,6 @@ export function branchHoldings({ branchId, pids }) {
  */
 export function branchOrderPolicy({ branchId, pids }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `
     query BranchesOrderPolicy($branchId: String!, $language: LanguageCodeEnum!, $pids: [String!]!) {
@@ -143,7 +139,6 @@ export function branchOrderPolicy({ branchId, pids }) {
  */
 export function isFFUAgency({ branchId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `
     query isFFUAgency($branchId: String!) {
@@ -162,7 +157,6 @@ export function isFFUAgency({ branchId }) {
 
 export function checkBlockedUser({ branchId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `
     query checkBlockedUser($branchId: String!, $language: LanguageCodeEnum!) {
@@ -187,7 +181,6 @@ export function checkBlockedUser({ branchId }) {
 
 export function branchesHighlightsByAgency({ agencyId, q, limit = 50 }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query branchesHighlightsByAgency($agencyId: String!, $q: String, $limit: PaginationLimitScalar!, $language: LanguageCodeEnum!) {
       branches(agencyid: $agencyId, q: $q, bibdkExcludeBranches: true, limit: $limit, statuses: AKTIVE, language: $language) {
@@ -209,7 +202,6 @@ export function branchesHighlightsByAgency({ agencyId, q, limit = 50 }) {
  */
 export function branchByBranchId({ branchId, pids, limit = 50, q = "" }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query branchByBranchId($branchId: String!, $q: String, $pids: [String!]!, $limit: PaginationLimitScalar!, $language: LanguageCodeEnum!) {
       branches(branchId: $branchId, q: $q, bibdkExcludeBranches: true, limit: $limit, statuses: AKTIVE, language: $language) {
@@ -235,7 +227,6 @@ export function branchByBranchId({ branchId, pids, limit = 50, q = "" }) {
  */
 export function branchesByQuery({ q, limit = 50 }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query branchesActiveInAgency($q: String!, $limit: PaginationLimitScalar!, $language: LanguageCodeEnum!) {
       branches(q: $q, bibdkExcludeBranches: true,  limit: $limit, statuses: AKTIVE, language: $language) {
@@ -257,7 +248,6 @@ export function branchesByQuery({ q, limit = 50 }) {
  */
 export function checkOrderPolicy({ pids, branchId, limit = 10 }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query checkOrderPolicy($branchId: String!, $pids: [String!]!, $limit: PaginationLimitScalar!, $language: LanguageCodeEnum!) {
       branches(branchId: $branchId, limit: $limit, bibdkExcludeBranches: true, statuses: AKTIVE, language: $language) {
@@ -280,7 +270,6 @@ export function checkOrderPolicy({ pids, branchId, limit = 10 }) {
  */
 export function borrowerCheck({ branchId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query borrowerCheck($branchId: String!, $language: LanguageCodeEnum!) {
       branches(branchId: $branchId, bibdkExcludeBranches: true, statuses: AKTIVE, language: $language) {
@@ -298,7 +287,6 @@ export function borrowerCheck({ branchId }) {
 
 export function holdingsForAgency({ agencyId, pids }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query holdingsForAgency($agencyId: String!, $pids: [String!]!, $limit: PaginationLimitScalar!) {
       branches(agencyid: $agencyId, limit: $limit, statuses: AKTIVE) {

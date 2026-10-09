@@ -35,8 +35,12 @@ The following environment variables can be set in the application. Variables pre
   Set to false in production. When set to true, the session id is set to "test", when collecting data. This allow AI to remove entries with session_id=test. Default is true.
 - **NEXT_PUBLIC_API_URL**
   URL to the GraphQL API. Default is http://bibliotekdk-next-api-1.febib-staging.svc.cloud.dbc.dk/graphql.
-- - **NEXT_PUBLIC_FBI_API_URL**
-    URL to the FBI_API GraphQL API. Default is https://fbi-api-staging.k8s.dbc.dk/bibdk21/graphql.
+- **NEXT_PUBLIC_FBI_API_ORIGIN**
+  FBI API origin (protocol, host and optional port), e.g. `http://localhost:3000` or `https://fbi-api.dbc.dk`. Default is `https://fbi-api-staging.k8s.dbc.dk`.
+- **NEXT_PUBLIC_FBI_API_PRESENT_PROFILE**
+  Fallback profile for unresolved materials on the bookmarks page. Default is `Huskeliste`.
+- **NEXT_PUBLIC_FBI_API_SEARCH_PROFILE**
+  Default profile for all API operations, including work pages and bookmark mutations. Default is `StudieSoeg`. Operations can override this with `profile: "present"`. The bookmarks page first resolves materials through the search profile and, when needed, fetches the same page through the present profile, matching items by UUID. Materials resolved only through the fallback profile have no work-page link or ordering.
 - **API_TIMEOUT_MS**
   Time in ms for how long the Next.js server should wait for data when doing server side rendering. Default is 150.
 - **NEXTAUTH_URL**

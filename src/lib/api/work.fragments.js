@@ -3,7 +3,6 @@
  *
  */
 
-import { ApiEnums } from "@/lib/api/api";
 import {
   coverFragment,
   creatorsFragment,
@@ -19,7 +18,6 @@ import {
 
 export function workTableOfContents({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `query workTableOfContents($id: String!) {
       work(id: $id) {
         manifestations {
@@ -83,7 +81,6 @@ export function workTableOfContents({ workId }) {
  */
 export function recommendations({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 4000, // for debugging
     query: `query Recommendations($workId: String!) {
     recommend(id: $workId) {
@@ -119,7 +116,6 @@ export function recommendations({ workId }) {
  */
 export function reviews({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 1000, // for debugging
     query: `query Reviews($workId: String!) {
               work(id: $workId) {
@@ -210,7 +206,6 @@ export function reviews({ workId }) {
 
 export function seriesLight({ workId, seriesLimit = null }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 4000, // for debugging
     query: `query Series($workId: String!, $seriesLimit: Int) {
       work(id: $workId) {
@@ -254,7 +249,6 @@ export function seriesLight({ workId, seriesLimit = null }) {
  */
 export function series({ workId, seriesLimit = null }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 4000, // for debugging
     query: `query Series($workId: String!, $seriesLimit: Int ) {
       work(id: $workId) {
@@ -310,7 +304,6 @@ export function series({ workId, seriesLimit = null }) {
  */
 export function seriesById({ seriesId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 4000, // for debugging
     query: `query seriesById($seriesId: String!) {
   series(seriesId:$seriesId){
@@ -361,7 +354,6 @@ export function worksInSeries({ workIds }) {
     return null;
   }
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 4000, // for debugging
     query: `query worksInSeries($workIds: [String!]!) {
       works(id: $workIds) {
@@ -397,8 +389,6 @@ export function worksInSeries({ workIds }) {
  */
 export function retrieverArticlePublicInfo({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
-
     // delay: 4000, // for debugging
     query: `query RetrieverPublic($workId: String!) {
       work(id: $workId) {
@@ -450,7 +440,6 @@ export function retrieverArticlePublicInfo({ workId }) {
  */
 export function subjects({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 250,
     query: `
     query subjects($workId: String!) {
@@ -482,7 +471,6 @@ export function subjects({ workId }) {
  */
 export function description({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 250,
     query: `
     query description($workId: String!) {
@@ -517,7 +505,6 @@ export function description({ workId }) {
  */
 export function buttonTxt({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     // delay: 250,
     query: `
     query buttonTxt ($workId: String!) {
@@ -552,7 +539,6 @@ export function buttonTxt({ workId }) {
 export function fbiOverviewDetail({ workId }) {
   return {
     // delay: 4000, // for debugging
-    apiUrl: ApiEnums.FBI_API,
     query: `query overViewDetails($workId: String!) {
         work(id: $workId) {
           workId
@@ -679,12 +665,11 @@ export function fbiOverviewDetail({ workId }) {
 /**
  * Get parameters needed to generate JsonLD - @see components/work/header/Header.js
  * @param workId
- * @returns {{variables: {workId}, apiUrl: string, slowThreshold: number, query: string}}
+ * @returns {{variables: {workId}, slowThreshold: number, query: string}}
  */
 export function workJsonLd({ workId }) {
   return {
     // delay: 4000, // for debugging
-    apiUrl: ApiEnums.FBI_API,
     query: `query workJsonLd($workId: String!) {
             work(id: $workId) {
               workId
@@ -752,7 +737,6 @@ export function idsToWorks({ ids }) {
     return null;
   }
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query idsToWorks($ids: [String!]!) {
       works(id: $ids) {
@@ -825,7 +809,6 @@ export function idsToWorks({ ids }) {
 
 export function listOfAllManifestations({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query listOfAllManifestations($workId: String!) {
       work(id: $workId) {
@@ -877,7 +860,6 @@ export function listOfAllManifestations({ workId }) {
 
 export function orderPageWorkWithManifestations({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query orderPageManifestations($workId: String!) {
       work(id: $workId) {
@@ -903,7 +885,6 @@ export function orderPageWorkWithManifestations({ workId }) {
 
 export function overviewWork({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query overviewWork($workId: String!) {
       work(id: $workId) {
@@ -988,7 +969,6 @@ export function pidToWorkId({ pid }) {
     return null;
   }
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query pidToWorkId($pid: String!) {
       work(pid: $pid) {
@@ -1014,7 +994,6 @@ export function faustToWork({ faust }) {
   }
 
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query faustToWork($faust: String!) {
       work(faust: $faust) {
@@ -1037,7 +1016,6 @@ export function oclcToWorkId({ oclc }) {
     return null;
   }
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query pidToWorkId($oclc: String!) {
       work(oclc: $oclc) {
@@ -1060,7 +1038,6 @@ export function oclcToWorkId({ oclc }) {
 
 export function workIdToTitleCreator({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query workIdToTitleCreator($workId: String!) {
       work(id: $workId) {
@@ -1081,7 +1058,6 @@ export function workIdToTitleCreator({ workId }) {
 
 export function workForWorkRelationsWorkTypeFactory({ workId }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query workForWorkRelationsWorkTypeFactory($workId: String!) {
       work(id: $workId) {

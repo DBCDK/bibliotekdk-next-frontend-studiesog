@@ -4,7 +4,6 @@
  * @param {Object} params
  * @param {string} params.workId the work id
  */
-import { ApiEnums } from "@/lib/api/api";
 
 export function submitMultipleOrders({
   materialsToOrder,
@@ -14,7 +13,6 @@ export function submitMultipleOrders({
   pagination,
 }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     mutation ($input: SubmitMultipleOrdersInput!) {
       submitMultipleOrders(input: $input) {
@@ -47,7 +45,6 @@ export function submitOrder({
   pagination,
 }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     mutation ($input: SubmitOrderInput!){
       submitOrder(input: $input){
@@ -84,7 +81,6 @@ export function submitPeriodicaArticleOrder({
   pagination,
 }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     mutation ($input: CopyRequestInput!) {
       elba {

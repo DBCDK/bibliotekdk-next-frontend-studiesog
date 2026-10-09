@@ -15,8 +15,9 @@ services:
       - CLIENT_ID=${CLIENT_ID}
       - CLIENT_SECRET=${CLIENT_SECRET}
       - CYPRESS=true
-      - NEXT_PUBLIC_FBI_API_URL=https://fbi-api-staging.k8s.dbc.dk/opac/graphql
-      - NEXT_PUBLIC_FBI_API_SIMPLESEARCH_URL=https://fbi-api-staging.k8s.dbc.dk/opac/graphql
+      - NEXT_PUBLIC_FBI_API_ORIGIN=https://fbi-api-staging.k8s.dbc.dk
+      - NEXT_PUBLIC_FBI_API_PRESENT_PROFILE=${NEXT_PUBLIC_FBI_API_PRESENT_PROFILE:-Huskeliste}
+      - NEXT_PUBLIC_FBI_API_SEARCH_PROFILE=${NEXT_PUBLIC_FBI_API_SEARCH_PROFILE:-StudieSoeg}
     command: npm run start
     shm_size: "2gb"
   e2e:

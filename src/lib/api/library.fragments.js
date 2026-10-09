@@ -3,8 +3,6 @@
  *
  */
 
-import { ApiEnums } from "@/lib/api/api";
-
 /**
  * Fast search
  *
@@ -19,7 +17,6 @@ export function search({
   offset,
 }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     delay: 200, // for debugging
     query: `
     query LibraryFragmentsSearch($q: String, $limit: PaginationLimitScalar, $offset: Int, $language: LanguageCodeEnum, $agencyId: String, $agencyTypes: [AgencyTypeEnum!]) {

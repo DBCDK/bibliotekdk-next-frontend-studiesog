@@ -88,7 +88,7 @@ module.exports = {
         permanent: false,
       },
       {
-        source: "/work/((?!work-of)):workId",
+        source: "/work/:workId((?!work-of)[^/]+)",
         destination: "/materiale/titel_skaber/work-of%3A:workId",
         permanent: true,
       },
@@ -138,15 +138,13 @@ module.exports = {
       process.env.USE_FIXED_SESSION_ID !== "false" ||
       !process.env.USE_FIXED_SESSION_ID,
     fbi_api: {
-      url:
-        process.env.NEXT_PUBLIC_FBI_API_URL ||
-        "https://fbi-api-staging.k8s.dbc.dk/bibdk21/graphql",
-      timeout: process.env.API_TIMEOUT_MS || 150,
-    },
-    fbi_api_simplesearch: {
-      url:
-        process.env.NEXT_PUBLIC_FBI_API_SIMPLESEARCH_URL ||
-        "https://fbi-api-staging.k8s.dbc.dk/SimpleSearch/graphql",
+      origin:
+        process.env.NEXT_PUBLIC_FBI_API_ORIGIN ||
+        "https://fbi-api-staging.k8s.dbc.dk",
+      presentProfile:
+        process.env.NEXT_PUBLIC_FBI_API_PRESENT_PROFILE || "Huskeliste",
+      searchProfile:
+        process.env.NEXT_PUBLIC_FBI_API_SEARCH_PROFILE || "StudieSoeg",
       timeout: process.env.API_TIMEOUT_MS || 150,
     },
     app: {

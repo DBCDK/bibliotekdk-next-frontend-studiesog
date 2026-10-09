@@ -58,7 +58,7 @@ export const options = {
     testUserProvider({
       clientId,
       clientSecret,
-      fbiApiUrl: publicRuntimeConfig.fbi_api.url,
+      fbiApiUrl: publicRuntimeConfig.fbi_api.origin,
     }),
   ],
   debug: false,

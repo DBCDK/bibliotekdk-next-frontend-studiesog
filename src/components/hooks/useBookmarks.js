@@ -1,6 +1,13 @@
 import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
+import { useSession } from "next-auth/react";
 import * as workFragments from "@/lib/api/work.fragments";
-import { useData, useMutate } from "@/lib/api/api";
+import {
+  useData,
+  useFetcher,
+  useMutate,
+  getSearchProfile,
+} from "@/lib/api/api";
 import { useEffect, useState, useMemo } from "react";
 import * as bookmarkMutations from "@/lib/api/bookmarks.mutations";
 import * as bookmarkFragments from "@/lib/api/bookmarks.fragments";
@@ -12,8 +19,9 @@ import {
   flattenMaterialType,
   formatMaterialTypesFromCode,
   formatMaterialTypesToCode,
+  formatMaterialTypesToPresentation,
+  manifestationMaterialTypeFactory,
 } from "@/lib/manifestationFactoryUtils";
-import isEmpty from "lodash/isEmpty";
 import useDataCollect from "@/lib/useDataCollect";
 
 const KEY_NAME = "bookmarks";
@@ -36,203 +44,341 @@ export const BookmarkSyncProvider = () => {
   return <></>;
 };
 
-const useBookmarksCore = ({ hasCulrUniqueId, isMock = false } = {}) => {
+export function toBookmarkInput(bookmark) {
+  const { materialId, workId, materialType } = bookmark;
+  const isWork = materialId?.startsWith("work-of:");
+  const selection = Object.prototype.hasOwnProperty.call(bookmark, "selection")
+    ? bookmark.selection
+    : isWork && materialId === workId && materialType
+    ? { materialTypes: { specific: formatMaterialTypesFromCode(materialType) } }
+    : null;
+  if (!isWork || !selection) return { materialId };
+  const materialTypes = {};
+  for (const field of ["general", "specific"]) {
+    if (selection.materialTypes?.[field]?.length) {
+      materialTypes[field] = [
+        ...new Set(selection.materialTypes[field]),
+      ].sort();
+    }
+  }
+  return Object.keys(materialTypes).length
+    ? { materialId, selection: { materialTypes } }
+    : { materialId };
+}
+
+export function getBookmarkKey(bookmark) {
+  const { materialId, selection } = toBookmarkInput(bookmark);
+  return JSON.stringify([materialId, selection || null]);
+}
+
+function normalizeBookmark(bookmark) {
+  const selection = toBookmarkInput(bookmark).selection || null;
+  return {
+    ...bookmark,
+    selection,
+    bookmarkId: bookmark.id || bookmark.bookmarkId,
+    workId:
+      bookmark.material?.work?.workId ||
+      bookmark.material?.manifestation?.ownerWork?.workId ||
+      bookmark.snapshot?.workId ||
+      bookmark.workId ||
+      (bookmark.materialId?.startsWith("work-of:")
+        ? bookmark.materialId
+        : undefined),
+    title: bookmark.snapshot?.title || bookmark.title,
+    materialType:
+      selection?.materialTypes?.specific?.join(" / ") ||
+      (!bookmark.materialId?.startsWith("work-of:")
+        ? bookmark.snapshot?.materialTypes
+            ?.map((mt) => mt.materialTypeSpecific.code)
+            .join(" / ") || bookmark.materialType
+        : undefined),
+    key: bookmark.id || bookmark.bookmarkId || getBookmarkKey(bookmark),
+  };
+}
+
+// Resolution must refer to the saved edition/selection, not another edition of its work.
+function isBookmarkResolved(bookmark) {
+  if (!bookmark.materialId?.startsWith("work-of:")) {
+    return bookmark.material?.manifestation?.pid === bookmark.materialId;
+  }
+  if (toBookmarkInput(bookmark).selection) {
+    return !!bookmark.material?.manifestations?.some((item) => item.pid);
+  }
+  return !!bookmark.material?.work?.workId;
+}
+
+const useBookmarksCore = ({
+  hasCulrUniqueId,
+  isMock = false,
+  list = false,
+  workId,
+  userId,
+} = {}) => {
   const collect = useDataCollect();
   hasCulrUniqueId = isMock ? false : hasCulrUniqueId;
-
-  const [sortBy, setSortBy] = useState("createdAt");
-  const [currentPage, setCurrentPage] = useState(1);
+  const fetch = useFetcher();
+  const bookmarkMutation = useMutate();
+  const [sortBy, setSort] = useState("createdAt");
+  const [desktopPage, setDesktopPage] = useState(1);
+  const [mutationError, setMutationError] = useState(null);
   const breakpoint = useBreakpoint();
   const isMobile = breakpoint === "xs" || breakpoint === "sm";
-
-  let {
-    data: localBookmarks,
-    mutate: mutateLocalBookmarks,
-    error,
-  } = useSWR(KEY_NAME, (key) => JSON.parse(getLocalStorageItem(key) || "[]"));
+  const { data: revision, mutate: mutateRevision } = useSWR(
+    "bookmarks-revision",
+    null,
+    { fallbackData: 0 }
+  );
   const {
-    data: globalBookmarksUserObject,
-    isLoading: isLoadingGlobalBookmarks,
-    error: globalBookmarksError,
-    mutate: mutateGlobalBookmarks,
-  } = useData(
-    hasCulrUniqueId &&
-      bookmarkFragments.fetchAll({
-        sortBy,
-      })
+    data: storedLocalBookmarks,
+    mutate: mutateLocalBookmarks,
+    error: localError,
+  } = useSWR(KEY_NAME, () => JSON.parse(getLocalStorageItem(KEY_NAME) || "[]"));
+  const localBookmarks = useMemo(
+    () => storedLocalBookmarks?.map(normalizeBookmark),
+    [storedLocalBookmarks]
   );
-  const bookmarkMutation = useMutate();
+  const countOnly = !list && !workId;
+  const {
+    data: pages,
+    error: globalError,
+    size,
+    setSize,
+    isValidating,
+  } = useSWRInfinite(
+    (index) =>
+      hasCulrUniqueId && ((isMobile && list) || index === 0)
+        ? [
+            "patronBookmarks",
+            userId,
+            revision,
+            sortBy,
+            workId || null,
+            countOnly,
+            isMobile && list ? index : desktopPage - 1,
+            isMobile && list,
+            list,
+            getSearchProfile(),
+            list ? getSearchProfile("present") : null,
+          ]
+        : null,
+    async ([, , , sort, filterWorkId, onlyCount, page, , withMaterial]) => {
+      const limit = filterWorkId ? 100 : onlyCount ? 1 : ITEMS_PER_PAGE;
+      let offset = filterWorkId || onlyCount ? 0 : page * ITEMS_PER_PAGE;
+      const items = [];
+      let response;
+      do {
+        const query = bookmarkFragments.fetchAll({
+          sortBy: sort,
+          offset,
+          limit,
+          workId: filterWorkId,
+          countOnly: onlyCount,
+          withMaterial,
+        });
+        const result = await fetch(query);
+        response = result?.data?.patron?.bookmarks;
+        if (result?.errors?.length || response?.status !== "OK") {
+          throw new Error(response?.status || "Could not fetch bookmarks");
+        }
+        let pageItems = response.items || [];
+        if (withMaterial) {
+          pageItems = pageItems.map((bookmark) => ({
+            ...bookmark,
+            isAvailableInSearchProfile: isBookmarkResolved(bookmark),
+          }));
+          const needsFallbackMaterials = pageItems.some(
+            (bookmark) => !bookmark.isAvailableInSearchProfile
+          );
+          if (needsFallbackMaterials) {
+            const fallback = await fetch({ ...query, profile: "present" });
+            const fallbackResponse = fallback?.data?.patron?.bookmarks;
+            if (fallback?.errors?.length || fallbackResponse?.status !== "OK") {
+              throw new Error(
+                fallbackResponse?.status || "Could not fetch bookmark materials"
+              );
+            }
+            const byId = new Map(
+              fallbackResponse.items?.map((bookmark) => [bookmark.id, bookmark])
+            );
+            // Keep search-profile order and identity, even if the list changed between calls.
+            pageItems = pageItems.map((bookmark) => {
+              const fallbackBookmark = byId.get(bookmark.id);
+              const canUseFallbackMaterial =
+                !bookmark.isAvailableInSearchProfile &&
+                fallbackBookmark &&
+                getBookmarkKey(fallbackBookmark) === getBookmarkKey(bookmark);
+              return canUseFallbackMaterial
+                ? { ...bookmark, material: fallbackBookmark.material }
+                : bookmark;
+            });
+          }
+        }
+        items.push(...pageItems);
+        offset += limit;
+      } while (filterWorkId && offset < response.hitcount);
+      return { ...response, items };
+    },
+    { revalidateFirstPage: false, persistSize: true }
+  );
   const globalBookmarks = useMemo(
-    () =>
-      globalBookmarksUserObject?.user?.bookmarks?.result?.map((bookmark) => ({
-        ...bookmark,
-        key: bookmark.materialId + bookmark.materialType,
-      })),
-    [globalBookmarksUserObject]
+    () => pages?.flatMap((page) => page.items.map(normalizeBookmark)) || [],
+    [pages]
   );
+  const currentPage = isMobile && list ? size : desktopPage;
+  const hitcount = hasCulrUniqueId
+    ? pages?.[0]?.hitcount || 0
+    : localBookmarks?.length || 0;
+  const totalPages = Math.ceil(hitcount / ITEMS_PER_PAGE);
+  const globalLoading =
+    hasCulrUniqueId &&
+    !globalError &&
+    (!pages || (isMobile && list && !pages[size - 1]));
 
-  let hitcount;
-
-  if (hasCulrUniqueId) {
-    hitcount = globalBookmarksUserObject?.user?.bookmarks?.hitcount || 0;
-  } else {
-    hitcount = localBookmarks?.length || 0;
+  function setCurrentPage(page) {
+    if (isMobile && list && hasCulrUniqueId) setSize(Math.max(1, page));
+    else setDesktopPage(Math.max(1, page));
   }
 
-  const totalPages = Math.ceil(hitcount / ITEMS_PER_PAGE);
+  function setSortBy(value) {
+    if (!value || value === sortBy) return;
+    setSort(value);
+    setDesktopPage(1);
+    setSize(1);
+  }
+
+  async function refreshBookmarks() {
+    await mutateRevision((value) => (value || 0) + 1, { revalidate: false });
+  }
+
+  async function storeLocal(bookmarks) {
+    setLocalStorageItem(KEY_NAME, JSON.stringify(bookmarks));
+    await mutateLocalBookmarks(bookmarks, false);
+  }
 
   const syncCookieBookmarks = async () => {
-    if (!hasCulrUniqueId) return; // Not authenticated
-    const cookies = await JSON.parse(getLocalStorageItem(KEY_NAME) || "[]");
-    if (!cookies || !Array.isArray(cookies) || cookies.length === 0) return; // Nothing to sync
-
+    if (!hasCulrUniqueId) return;
+    const local = JSON.parse(getLocalStorageItem(KEY_NAME) || "[]");
+    if (!Array.isArray(local) || local.length === 0) return;
     try {
-      await bookmarkMutation.post(
+      const result = await bookmarkMutation.post(
         bookmarkMutations.addBookmarks({
-          bookmarks: createdAtSort(cookies, "desc").map((bookmark) => ({
-            materialId: bookmark.materialId,
-            materialType: bookmark.materialType,
-            title: bookmark.title,
-            workId: bookmark.workId,
-          })),
+          bookmarks: createdAtSort([...local], "desc").map(toBookmarkInput),
         })
       );
-
-      await mutateGlobalBookmarks();
-
-      clearLocalBookmarks();
-    } catch (e) {
-      console.error("Error syncing local bookmarks", e);
+      const response = result.data?.patron?.addBookmarks;
+      const confirmed = new Set(
+        response?.items
+          ?.filter((item) => ["OK", "ALREADY_EXISTS"].includes(item.status))
+          .map(getBookmarkKey)
+      );
+      const latestLocal = JSON.parse(getLocalStorageItem(KEY_NAME) || "[]");
+      await storeLocal(
+        latestLocal.filter(
+          (bookmark) => !confirmed.has(getBookmarkKey(bookmark))
+        )
+      );
+      await refreshBookmarks();
+      if (
+        result.error ||
+        local.some((bookmark) => !confirmed.has(getBookmarkKey(bookmark)))
+      ) {
+        setMutationError(
+          result.error || new Error("Could not sync all bookmarks")
+        );
+      }
+    } catch (error) {
+      setMutationError(error);
+      console.error("Error syncing local bookmarks", error);
     }
   };
 
-  /**
-   * Set a value in bookmark list
-   */
-  const setBookmark = async (value) => {
+  const deleteBookmarks = async (
+    bookmarksToDelete,
+    onDeleted = (count) => collect.collectDelMultipleBookmarks({ count })
+  ) => {
+    if (!bookmarksToDelete.length) return [];
+    setMutationError(null);
+    let deleted = bookmarksToDelete;
     if (hasCulrUniqueId) {
-      /**
-       * API solution
-       */
-
-      // Find existing
-      const existingIndex = globalBookmarks?.findIndex(
-        (bookmark) => bookmark.key === value.key
+      const result = await bookmarkMutation.post(
+        bookmarkMutations.deleteBookmarks({
+          bookmarkIds: bookmarksToDelete.map((bookmark) => bookmark.bookmarkId),
+        })
       );
-      if (existingIndex === -1) {
-        // Doesn't exist - Add
-        await bookmarkMutation.post(
-          bookmarkMutations.addBookmarks({
-            bookmarks: [
-              {
-                materialId: value.materialId,
-                materialType: value.materialType,
-                title: value.title,
-                workId: value.workId,
-              },
-            ],
-          })
+      await refreshBookmarks();
+      const confirmed = new Set(
+        result.data?.patron?.deleteBookmarks?.items
+          ?.filter((item) => ["OK", "NOT_FOUND"].includes(item.status))
+          .map((item) => item.id)
+      );
+      deleted = bookmarksToDelete.filter((bookmark) =>
+        confirmed.has(bookmark.bookmarkId)
+      );
+      if (result.error || deleted.length !== bookmarksToDelete.length)
+        setMutationError(
+          result.error || new Error("Could not delete all bookmarks")
         );
-        collect.collectAddBookmark(value);
-      } else {
-        // Exists - Delete
-        const idToDelete = globalBookmarks[existingIndex].bookmarkId;
-        await bookmarkMutation.post(
-          bookmarkMutations.deleteBookmarks({
-            bookmarkIds: [idToDelete],
-          })
-        );
-        collect.collectDelBookmark(value);
-      }
-
-      await mutateGlobalBookmarks();
     } else {
-      /**
-       * Cookie solution
-       */
-
-      // Find existing
-      const existingIndex = localBookmarks?.findIndex(
-        (obj) => obj.key === value.key
+      const keys = new Set(bookmarksToDelete.map((bookmark) => bookmark.key));
+      await storeLocal(
+        (localBookmarks || []).filter((bookmark) => !keys.has(bookmark.key))
       );
-      if (existingIndex === -1) {
-        // push if not there
-        localBookmarks?.push({ ...value, createdAt: new Date() });
-        collect.collectAddBookmark(value);
-      } else {
-        // remove if already there
-        localBookmarks?.splice(existingIndex, 1);
-        collect.collectDelBookmark(value);
-      }
+    }
+    if (deleted.length) onDeleted(deleted.length);
+    return deleted.map((bookmark) => bookmark.key);
+  };
 
-      // store
-      const stringified = JSON.stringify(localBookmarks);
-      setLocalStorageItem(KEY_NAME, stringified);
-
-      // mutate
-      mutateLocalBookmarks(localBookmarks);
+  const setBookmark = async (value) => {
+    if (hasCulrUniqueId && (globalLoading || globalError || isValidating))
+      return;
+    setMutationError(null);
+    const bookmark = normalizeBookmark(value);
+    const bookmarks = hasCulrUniqueId ? globalBookmarks : localBookmarks || [];
+    const existing = bookmarks.find((item) =>
+      value.key
+        ? item.key === value.key
+        : getBookmarkKey(item) === getBookmarkKey(bookmark)
+    );
+    if (existing) {
+      await deleteBookmarks([existing], () =>
+        collect.collectDelBookmark(value)
+      );
+    } else if (hasCulrUniqueId) {
+      const result = await bookmarkMutation.post(
+        bookmarkMutations.addBookmarks({
+          bookmarks: [toBookmarkInput(bookmark)],
+        })
+      );
+      await refreshBookmarks();
+      const isAddConfirmed = result.data?.patron?.addBookmarks?.items?.some(
+        (item) =>
+          ["OK", "ALREADY_EXISTS"].includes(item.status) &&
+          getBookmarkKey(item) === getBookmarkKey(bookmark)
+      );
+      if (isAddConfirmed) collect.collectAddBookmark(value);
+      else setMutationError(new Error("Could not add bookmark"));
+      if (result.error) setMutationError(result.error);
+    } else {
+      await storeLocal([...bookmarks, { ...bookmark, createdAt: new Date() }]);
+      collect.collectAddBookmark(value);
     }
   };
 
   function clearLocalBookmarks() {
-    const empty = [];
-    // store
-    const stringified = JSON.stringify(empty);
-    setLocalStorageItem(KEY_NAME, stringified);
-    //mutate
-    mutateLocalBookmarks(empty);
+    return storeLocal([]);
   }
 
-  const deleteBookmarks = async (bookmarksToDelete) => {
-    if (hasCulrUniqueId) {
-      const ids = bookmarksToDelete.map((i) => i.bookmarkId);
-      await bookmarkMutation.post(
-        bookmarkMutations.deleteBookmarks({
-          bookmarkIds: ids,
-        })
-      );
+  function createdAtSort(bookmarks = [], direction = "asc") {
+    return [...bookmarks].sort((a, b) =>
+      direction === "asc"
+        ? new Date(b.createdAt) - new Date(a.createdAt)
+        : new Date(a.createdAt) - new Date(b.createdAt)
+    );
+  }
 
-      mutateGlobalBookmarks();
-    } else {
-      const keysToDelete = bookmarksToDelete.map((i) => i.key);
-      const updated = localBookmarks.filter(
-        (item) => !keysToDelete.includes(item.key)
-      );
-      const stringified = JSON.stringify(updated);
-      setLocalStorageItem(KEY_NAME, stringified);
-      mutateLocalBookmarks(updated);
-    }
-    collect.collectDelMultipleBookmarks({ count: bookmarksToDelete?.length });
-  };
-
-  /**
-   * sorts bookmarkList by createdAt
-   * @param {Object[]} bookmarkList list of bookmarks
-   * @param {string} sortDirection can be either asc or desc
-   * @returns {Object[]} bookmarkList
-   */
-  const createdAtSort = (bookmarkList = [], sortDirection = "asc") => {
-    return bookmarkList.sort((a, b) => {
-      const aDate = new Date(a.createdAt);
-      const bDate = new Date(b.createdAt);
-      if (aDate < bDate) {
-        return sortDirection === "asc" ? 1 : -1;
-      }
-      if (aDate > bDate) {
-        return sortDirection === "asc" ? -1 : 1;
-      }
-      return 0;
-    });
-  };
-
-  /**
-   * sorts bookmarkList by title
-   * @param {Object[]} bookmarkList list of bookmarks
-   * @param {string} sortDirection can be either asc or desc
-   * @returns {Object[]} bookmarkList
-   */
   const titleSort = (bookmarkList = [], sortDirection = "asc") => {
-    return bookmarkList.sort((a, b) => {
+    return [...bookmarkList].sort((a, b) => {
       const aTitle = a.titles?.full?.[0] || a?.title;
       const bTitle = b.titles?.full?.[0] || b?.title;
       if (aTitle < bTitle) {
@@ -245,67 +391,49 @@ const useBookmarksCore = ({ hasCulrUniqueId, isMock = false } = {}) => {
     });
   };
 
-  /**
-   * Returns localbookmarks sorted by users preference
-   */
-  function sortBookmarks(bookmarksToSort) {
-    return sortBy === "createdAt"
-      ? createdAtSort(bookmarksToSort)
-      : titleSort(bookmarksToSort);
-  }
-  /**
-   * Returns a of localbookmarks that corresponds to the current page of local bookmarks.
-   */
-  function currenPageBookmark(bookmarkToPaginate) {
-    const startIdx = isMobile
-      ? 0
-      : (currentPage > 0 ? currentPage - 1 : currentPage) * ITEMS_PER_PAGE;
-    const endIdx = isMobile
-      ? startIdx + ITEMS_PER_PAGE * currentPage
-      : startIdx + ITEMS_PER_PAGE;
-    const currentPageBookmarks = bookmarkToPaginate.slice(startIdx, endIdx);
-
-    return currentPageBookmarks;
-  }
-  // sort local bookmarks
-  const sortedLocalBookmarks = useMemo(() => {
-    return sortBookmarks(localBookmarks);
-  }, [localBookmarks, sortBy]);
-
-  // sort global bookmarks
-  const sortedGlobalBookmarks = useMemo(() => {
-    return sortBookmarks(globalBookmarks);
-  }, [globalBookmarks, sortBy]);
-
+  const sortedLocal =
+    sortBy === "title"
+      ? titleSort(localBookmarks)
+      : createdAtSort(localBookmarks);
+  const localPage = sortedLocal.slice(
+    isMobile ? 0 : (desktopPage - 1) * ITEMS_PER_PAGE,
+    desktopPage * ITEMS_PER_PAGE
+  );
   return {
     setBookmark,
     deleteBookmarks,
     clearLocalBookmarks,
-    bookmarks: hasCulrUniqueId ? globalBookmarks : localBookmarks,
-    paginatedBookmarks: hasCulrUniqueId
-      ? currenPageBookmark(sortedGlobalBookmarks)
-      : currenPageBookmark(sortedLocalBookmarks),
-    isLoading:
-      (typeof localBookmarks === "undefined" && !error) ||
-      (isLoadingGlobalBookmarks && !globalBookmarksError),
     syncCookieBookmarks,
+    bookmarks: hasCulrUniqueId
+      ? globalBookmarks
+      : workId
+      ? localBookmarks?.filter((bm) => bm.workId === workId)
+      : localBookmarks,
+    paginatedBookmarks: hasCulrUniqueId ? globalBookmarks : localPage,
+    isLoading: hasCulrUniqueId ? globalLoading : !localBookmarks && !localError,
+    error: (hasCulrUniqueId ? globalError : localError) || mutationError,
     setSortBy,
-    currentPage,
+    currentPage: hasCulrUniqueId ? currentPage : desktopPage,
     totalPages,
     setCurrentPage,
-    count: hitcount ?? localBookmarks?.length ?? 0,
+    count: hitcount,
     createdAtSort,
     titleSort,
   };
 };
 
-const useBookmarkImpl = () => {
+const useBookmarkImpl = (options) => {
   const { hasCulrUniqueId } = useAuthentication();
-  return useBookmarksCore({ hasCulrUniqueId });
+  const { data: session } = useSession();
+  return useBookmarksCore({
+    ...options,
+    hasCulrUniqueId,
+    userId: session?.user?.userId,
+  });
 };
 
-const useBookmarkMock = () => {
-  return useBookmarksCore({ isMock: true });
+const useBookmarkMock = (options) => {
+  return useBookmarksCore({ ...options, isMock: true });
 };
 
 //OBS order does not matter in this implementation. should order matter?
@@ -321,117 +449,141 @@ export const isMaterialTypesMatch = (
   return isEqual(new Set(workTypesOfBookmark), new Set(materialTypeCodes));
 };
 
-/**
- * Find the work index where one pid in mostRelevant matches the given materialId
- * OBS: we cannot simply look for matching workIds, since workIds might be changing
- * @returns {number} index of work
- */
-export function findRelevantWorkIdx(
-  workByIdsDataRemovedDuplicates,
-  materialId,
-  pid,
-  materialType,
-  workId
-) {
-  if (
-    !workByIdsDataRemovedDuplicates ||
-    !materialId ||
-    (!pid && !materialType)
-  ) {
-    return -1;
-  }
-
-  return workByIdsDataRemovedDuplicates?.findIndex((w) => {
-    if (!w?.workId || w?.workId !== workId) {
-      return false;
-    }
-    if (pid) {
-      return w?.manifestations?.mostRelevant?.some(
-        (mostRelevant) => mostRelevant.pid === pid
-      );
-    }
-    if (materialType) {
-      return w?.manifestations?.mostRelevant?.some((mostRelevant) => {
-        return isEqual(
-          formatMaterialTypesToCode(flattenMaterialType(mostRelevant)),
-          materialType
-        );
-      });
-    }
-  });
-}
-
 const useBookmarks = process.env.STORYBOOK_ACTIVE
   ? useBookmarkMock
   : useBookmarkImpl;
 export default useBookmarks;
 
 /**
- * Used to populate bookmark data, to show more info about the materials
- * Uses workid to find all manifestations for the work
- * filters the relevant manifestations based on the materialtype
- * and if pid provided, it will find the one relevant pid (specific edition was bookmarked)
- * @param {Object[]} bookmarks list of bookmarks
- * @returns {Object[]} bookmarks
+ * Keep the stored selection separate from the default material used for display.
+ * Server bookmarks supply their own material; local bookmarks use a work lookup.
  */
-export const usePopulateBookmarks = (bookmarks) => {
-  //all works both for specific edition and entire work
-  const workIds = bookmarks?.map((work) => work.workId);
-  const { data: workByIdsData, isLoading: idsToWorksLoading } = useData(
-    workIds &&
-      workFragments.idsToWorks({
-        ids: workIds,
-      })
-  );
-
-  const workByIdsDataRemovedDuplicates = workByIdsData?.works?.filter(
-    (value, idx) => workByIdsData?.works?.indexOf(value) === idx
-  );
-
-  const data = useMemo(() => {
-    if (!bookmarks) return [];
-
-    const relevantWorksByBookmarkId = bookmarks?.map((bookmark) => {
-      const relevantMaterialTypes = formatMaterialTypesFromCode(
-        bookmark?.materialType
+export function populateBookmark(bookmark, localWork) {
+  const normalized = normalizeBookmark(bookmark);
+  const { selection } = normalized;
+  const isServerBookmark = !!bookmark.id;
+  const material = bookmark.material;
+  const work = isServerBookmark
+    ? material?.work || material?.manifestation?.ownerWork
+    : localWork;
+  const pid = !bookmark.materialId?.startsWith("work-of:")
+    ? bookmark.materialId
+    : undefined;
+  let selected;
+  if (isServerBookmark && pid) {
+    selected = material?.manifestation ? [material.manifestation] : [];
+  } else if (isServerBookmark && selection) {
+    selected = material?.manifestations || [];
+  } else {
+    const manifestations = work?.manifestations?.mostRelevant || [];
+    let defaultTypes;
+    if (!pid && !selection) {
+      defaultTypes = manifestationMaterialTypeFactory([
+        ...manifestations,
+      ]).uniqueMaterialTypes[0]?.map((mt) => mt.specificCode);
+    }
+    selected = manifestations.filter((manifestation) => {
+      if (pid) return manifestation.pid === pid;
+      if (!selection)
+        return isMaterialTypesMatch(defaultTypes, manifestation.materialTypes);
+      const field = selection.materialTypes.general ? "general" : "specific";
+      const property =
+        field === "general" ? "materialTypeGeneral" : "materialTypeSpecific";
+      const codes =
+        manifestation.materialTypes?.map((mt) => mt[property]?.code) || [];
+      return selection.materialTypes[field].every((code) =>
+        codes.includes(code)
       );
-
-      const workIdx = findRelevantWorkIdx(
-        workByIdsDataRemovedDuplicates,
-        bookmark?.materialId,
-        bookmark?.pid,
-        bookmark?.materialType,
-        bookmark?.workId
-      );
-      const work =
-        workIdx > -1 ? workByIdsDataRemovedDuplicates[workIdx] : null;
-
-      const manifestationWithCorrectMaterialTypes =
-        work?.manifestations?.mostRelevant.filter((m) =>
-          isMaterialTypesMatch(relevantMaterialTypes, m?.materialTypes)
-        );
-
-      const specificManifestation =
-        manifestationWithCorrectMaterialTypes?.filter(
-          (m) => m?.pid === bookmark?.materialId
-        );
-      const isSpecificEdition = !isEmpty(specificManifestation);
-
-      if (!work) return;
-      return {
-        ...work,
-        bookmarkId: bookmark?.bookmarkId,
-        materialId: bookmark?.materialId,
-        materialType: bookmark?.materialType,
-        pid: isSpecificEdition ? bookmark?.materialId : undefined,
-        key: bookmark?.key,
-        manifestations: isSpecificEdition
-          ? specificManifestation
-          : manifestationWithCorrectMaterialTypes,
-      };
     });
+  }
+  const first = selected[0];
+  const workManifestations = work?.manifestations?.mostRelevant || [];
+  const findCover = (manifestations, realOnly = false) => {
+    const cover = manifestations.find(
+      (manifestation) =>
+        (manifestation.cover?.thumbnail || manifestation.cover?.detail) &&
+        (!realOnly || manifestation.cover.origin !== "default")
+    )?.cover;
+    return cover?.thumbnail || cover?.detail || null;
+  };
+  const image =
+    findCover(selected, true) ||
+    findCover(workManifestations, true) ||
+    findCover(selected) ||
+    findCover(workManifestations);
+  const title =
+    first?.titles?.full?.[0] ||
+    first?.titles?.main?.[0] ||
+    work?.titles?.full?.[0] ||
+    work?.titles?.main?.[0] ||
+    bookmark.snapshot?.title ||
+    bookmark.title ||
+    "";
+  const creators = first?.creators?.length
+    ? first.creators
+    : work?.creators || [];
+  const creator =
+    (creators.find((item) => item.__typename === "Corporation") || creators[0])
+      ?.display ||
+    bookmark.snapshot?.creator ||
+    "";
+  const snapshotTypes = (bookmark.snapshot?.materialTypes || []).filter(
+    (type) => {
+      if (!selection) return !!pid;
+      const field = selection.materialTypes.general ? "general" : "specific";
+      return selection.materialTypes[field].includes(
+        type[
+          field === "general" ? "materialTypeGeneral" : "materialTypeSpecific"
+        ]?.code
+      );
+    }
+  );
+  const displayTypes = first?.materialTypes || snapshotTypes;
+  const flatTypes = flattenMaterialType({ materialTypes: displayTypes });
+  return {
+    ...work,
+    ...normalized,
+    workId: work?.workId || normalized.workId,
+    pid,
+    title,
+    titles: { main: [title], full: [title] },
+    creators,
+    creator,
+    image,
+    hasMaterial: selected.some((manifestation) => !!manifestation.pid),
+    materialType:
+      selection?.materialTypes?.specific?.join(" / ") ||
+      formatMaterialTypesToCode(flatTypes),
+    materialTypeLabel:
+      formatMaterialTypesToPresentation(flatTypes) ||
+      selection?.materialTypes?.specific?.join(" / "),
+    manifestations: selected,
+  };
+}
 
-    return relevantWorksByBookmarkId.filter((item) => item); // filter nulls
-  }, [bookmarks, workByIdsData]);
-  return { data, isLoading: idsToWorksLoading };
+export const usePopulateBookmarks = (bookmarks) => {
+  const workIds = [
+    ...new Set(
+      bookmarks
+        ?.filter((bookmark) => !bookmark.id)
+        .map((bookmark) => bookmark.workId)
+        .filter(Boolean)
+    ),
+  ];
+  const { data, isLoading } = useData(
+    workIds.length > 0 && workFragments.idsToWorks({ ids: workIds })
+  );
+  const populated = useMemo(
+    () =>
+      bookmarks
+        ?.map((bookmark) =>
+          populateBookmark(
+            bookmark,
+            data?.works?.find((work) => work.workId === bookmark.workId)
+          )
+        )
+        .filter(Boolean) || [],
+    [bookmarks, data]
+  );
+  return { data: populated, isLoading };
 };

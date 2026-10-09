@@ -8,19 +8,23 @@ describe("Series", () => {
 
   it(`Verify title and creator are shown`, () => {
     cy.contains("Minder om");
-    cy.get("a").should("have.length", 20, { timeout: 10000 });
+    cy.get("#storybook-root a").should("have.length", 20, { timeout: 10000 });
 
-    cy.get("a")
+    cy.get("#storybook-root a")
       .eq(0)
       .contains("recommend.result[0].work.titles.tvSeries.title");
-    cy.get("a").eq(0).contains("recommend.result[0].work.creators[");
+    cy.get("#storybook-root a")
+      .eq(0)
+      .contains("recommend.result[0].work.creators[");
 
-    cy.get("a")
+    cy.get("#storybook-root a")
       .eq(1)
       .contains("recommend.result[1].work.titles.tvSeries.title");
-    cy.get("a").eq(1).contains("recommend.result[1].work.creators[");
+    cy.get("#storybook-root a")
+      .eq(1)
+      .contains("recommend.result[1].work.creators[");
 
-    cy.get("a")
+    cy.get("#storybook-root a")
       .eq(0)
       .should("have.attr", "href")
       // We are unaware of which creator this will use, so we just check that the rest of the href is correct
@@ -64,13 +68,14 @@ describe("Series", () => {
     cy.contains(title);
 
     // Emulate the scroll using cy.scrollTo
-    // The id :r0: is deterministic as we are using reacts useId
-    cy.get(`#${CSS.escape(":r0:")}`).scrollTo("right", { duration: 200 });
+    cy.get("[data-cy=recommender]")
+      .find("article")
+      .first()
+      .parent()
+      .scrollTo("right", { duration: 200 });
 
-    cy.contains(title, { timeout: 10000 })
-      .focus()
-      .should("be.visible", { timeout: 10000 })
-      .click();
+    cy.contains(title, { timeout: 10000 }).focus();
+    cy.contains(title).should("be.visible", { timeout: 10000 }).click();
 
     cy.getConsoleEntry("data_collect").then((entry) => {
       const actual = entry[1]?.recommender_click;

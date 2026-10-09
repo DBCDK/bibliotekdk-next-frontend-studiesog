@@ -1,8 +1,5 @@
-import { ApiEnums } from "@/lib/api/api";
-
 export function localizationsQuery({ pids }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query LocalizationsFragments($pids: [String!]!) {
       localizations(pids: $pids) {
@@ -30,7 +27,6 @@ export function localizationsWithHoldings({
   availabilityTypes = ["NOW"],
 }) {
   return {
-    apiUrl: ApiEnums.FBI_API,
     query: `
     query LocalizationsWithHoldings($pids: [String!]!, $limit: Int, $offset: Int, $availabilityTypes: [AvailabilityEnum!]) {
       localizationsWithHoldings(pids: $pids, limit: $limit, offset: $offset, bibdkExcludeBranches: true, statuses: AKTIVE, availabilityTypes: $availabilityTypes) {
