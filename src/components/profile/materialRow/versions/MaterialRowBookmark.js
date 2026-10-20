@@ -20,6 +20,19 @@ import ReservationButtonWrapper from "@/components/work/reservationbutton/Reserv
 import { TextWithCheckMark } from "../MaterialRow";
 import styles from "../MaterialRow.module.css";
 
+function getBookmarkSource(application, agency, siteAgencyId) {
+  if (application === "STUDIEBIB") {
+    return "Studiebib";
+  }
+  if (application === "BIBLIOTEKDK") {
+    return "bibliotek.dk";
+  }
+  if (!agency?.id || agency.id === siteAgencyId) {
+    return null;
+  }
+  return agency.name || null;
+}
+
 /**
  *
  * @param {Object} props
@@ -99,6 +112,9 @@ const MaterialRowBookmark = ({
   materialId,
   isSelected,
   image,
+  application,
+  agency,
+  siteAgencyId,
   dataCy,
   title,
   titles,
@@ -139,6 +155,7 @@ const MaterialRowBookmark = ({
   );
   const materialLabel =
     materialType || formatMaterialTypesToPresentation(flatMaterialTypes?.[0]);
+  const source = getBookmarkSource(application, agency, siteAgencyId);
 
   return (
     <article
@@ -174,11 +191,13 @@ const MaterialRowBookmark = ({
       )}
 
       <div className={sharedStyles.materialInfo}>
-        {!!image && (
-          <div className={sharedStyles.imageContainer}>
-            <Cover src={image} size="fill-width" />
-          </div>
-        )}
+        <div className={sharedStyles.imageContainer}>
+          <Cover
+            src={image}
+            size="fill-width"
+            className={cx({ [styles.bookmarkMissingCover]: !image })}
+          />
+        </div>
         <div className={sharedStyles.textContainer}>
           <ConditionalWrapper
             condition={
@@ -235,6 +254,15 @@ const MaterialRowBookmark = ({
             >
               {materialLabel}
               {edition && <span>{edition}</span>}
+            </Text>
+          )}
+          {source && (
+            <Text type="text3" className={styles.bookmarkSource}>
+              <Translate
+                context="bookmark"
+                label="added-from"
+                vars={[source]}
+              />
             </Text>
           )}
         </div>

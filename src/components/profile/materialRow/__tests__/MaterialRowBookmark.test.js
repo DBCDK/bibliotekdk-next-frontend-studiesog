@@ -86,3 +86,60 @@ test.each([true, false])(
     }
   }
 );
+
+test.each([
+  ["STUDIEBIB", "872600", "Eget bibliotek", "Studiebib"],
+  ["BIBLIOTEKDK", "872600", "Eget bibliotek", "bibliotek.dk"],
+  ["STUDIESOEG", "874260", "Greve", "Greve"],
+  ["STUDIESOEG", "872600", "Eget bibliotek", null],
+  ["FUTURE_APP", "874260", "Greve", "Greve"],
+  [undefined, "874260", "Greve", "Greve"],
+  [undefined, "872600", "Eget bibliotek", null],
+  ["FUTURE_APP", "874260", undefined, null],
+  [undefined, undefined, undefined, null],
+])("bookmark source for %s / %s", async (application, id, name, expected) => {
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  try {
+    await act(async () =>
+      root.render(
+        <MaterialRowBookmark
+          title="En bog"
+          application={application}
+          agency={{ id, name }}
+          siteAgencyId="872600"
+        />
+      )
+    );
+    const source = container.querySelector(".bookmarkSource");
+    if (expected) {
+      expect(source.textContent).toBe(`Tilføjet fra ${expected}`);
+    } else {
+      expect(source).toBeNull();
+    }
+  } finally {
+    await act(async () => root.unmount());
+  }
+});
+
+test("missing cover loses its fixed fallback height when an image arrives", async () => {
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  try {
+    await act(async () => root.render(<MaterialRowBookmark title="En bog" />));
+    expect(
+      container
+        .querySelector('[data-cy="missing-cover"]')
+        .classList.contains("bookmarkMissingCover")
+    ).toBe(true);
+    await act(async () =>
+      root.render(<MaterialRowBookmark title="En bog" image="/cover.jpg" />)
+    );
+    expect(container.querySelector('[data-cy="cover-present"]')).not.toBeNull();
+    expect(container.querySelector(".bookmarkMissingCover")).toBeNull();
+  } finally {
+    await act(async () => root.unmount());
+  }
+});

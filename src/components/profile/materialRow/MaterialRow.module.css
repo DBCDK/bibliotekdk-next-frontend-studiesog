@@ -193,6 +193,17 @@
   margin-top: var(--pt1);
 }
 
+.bookmarkSource {
+  font-size: 13px;
+  color: var(--dove);
+  margin-top: var(--pt1);
+}
+
+.bookmarkMissingCover {
+  height: 85px;
+  overflow: hidden;
+}
+
 .bookmarkMaterial span {
   display: block;
 }

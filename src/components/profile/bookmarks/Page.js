@@ -26,6 +26,7 @@ import { getSessionStorageItem, setSessionStorageItem } from "@/lib/utils";
 import { useAnalyzeMaterial } from "@/components/hooks/useAnalyzeMaterial";
 import { useOrderFlow } from "@/components/hooks/order";
 import { useModal } from "@/components/_modal";
+import { useSubDomainToBrancId } from "@/components/hooks/useSubDomainToBrancId";
 
 const CONTEXT = "bookmark";
 const ORDER_TRESHHOLD = 25;
@@ -94,6 +95,7 @@ const AnalyseItemAvailability = forwardRef(function AnalyseItemAvailability(
 
 const BookmarkPage = () => {
   const modal = useModal();
+  const { agency: siteAgency } = useSubDomainToBrancId();
   const itemsRef = useRef([]);
   const {
     paginatedBookmarks: bookmarksData,
@@ -104,6 +106,7 @@ const BookmarkPage = () => {
     setCurrentPage,
     count,
     isLoading: bookmarsDataLoading,
+    isLoadingMore,
     error: bookmarksError,
   } = useBookmarks({ list: true });
 
@@ -318,7 +321,9 @@ const BookmarkPage = () => {
   const isNothingSelected = checkboxList.length === 0;
 
   const isInitialLoading =
-    (bookmarsDataLoading || isPopulateLoading) && !populatedBookmarks.length;
+    !isLoadingMore &&
+    (bookmarsDataLoading || isPopulateLoading) &&
+    !populatedBookmarks.length;
 
   if (isInitialLoading) {
     return (
@@ -507,6 +512,9 @@ const BookmarkPage = () => {
               creators={bookmark.creators}
               materialType={bookmark.materialTypeLabel}
               image={bookmark.image}
+              application={bookmark.application}
+              agency={bookmark.agency}
+              siteAgencyId={siteAgency.agencyId}
               hasMaterial={bookmark.hasMaterial}
               isAvailableInSearchProfile={bookmark.isAvailableInSearchProfile}
               id={bookmark?.materialId}
@@ -536,7 +544,7 @@ const BookmarkPage = () => {
       {totalPages > 1 && (
         <Pagination
           forceMobileView={isMobile}
-          isLoading={bookmarsDataLoading}
+          isLoading={bookmarsDataLoading || isLoadingMore || isPopulateLoading}
           numPages={totalPages}
           currentPage={currentPage}
           className={styles.pagination}

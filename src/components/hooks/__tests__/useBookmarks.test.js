@@ -807,3 +807,41 @@ test("mobile fallback fetches only each new page and keeps prior availability", 
     ["page-25", false],
   ]);
 });
+
+test("mobile keeps loaded bookmarks while the next page is pending", async () => {
+  useBreakpoint.mockReturnValue("xs");
+  await mount();
+  let resolvePage;
+  fetch.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        resolvePage = resolve;
+      })
+  );
+  await act(async () => {
+    current.setCurrentPage(2);
+  });
+  await flush();
+  expect(current.isLoadingMore).toBe(true);
+  expect(
+    current.paginatedBookmarks.map((bookmark) => bookmark.bookmarkId)
+  ).toEqual([uuid]);
+  await act(async () =>
+    resolvePage({
+      data: {
+        patron: {
+          bookmarks: {
+            status: "OK",
+            hitcount,
+            items: [{ ...stored, id: "second" }],
+          },
+        },
+      },
+    })
+  );
+  await flush();
+  expect(current.isLoadingMore).toBe(false);
+  expect(
+    current.paginatedBookmarks.map((bookmark) => bookmark.bookmarkId)
+  ).toEqual([uuid, "second"]);
+});

@@ -58,6 +58,8 @@ export const fetchAll = ({
             id
             materialId
             createdAt
+            application
+            agency { id name }
             selection {
               materialTypes {
                 general
