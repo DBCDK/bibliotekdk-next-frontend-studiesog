@@ -20,19 +20,6 @@ import ReservationButtonWrapper from "@/components/work/reservationbutton/Reserv
 import { TextWithCheckMark } from "../MaterialRow";
 import styles from "../MaterialRow.module.css";
 
-function getBookmarkSource(application, agency, siteAgencyId) {
-  if (application === "STUDIEBIB") {
-    return "Studiebib";
-  }
-  if (application === "BIBLIOTEKDK") {
-    return "bibliotek.dk";
-  }
-  if (!agency?.id || agency.id === siteAgencyId) {
-    return null;
-  }
-  return agency.name || null;
-}
-
 /**
  *
  * @param {Object} props
@@ -112,9 +99,7 @@ const MaterialRowBookmark = ({
   materialId,
   isSelected,
   image,
-  application,
-  agency,
-  siteAgencyId,
+  origin,
   dataCy,
   title,
   titles,
@@ -155,7 +140,21 @@ const MaterialRowBookmark = ({
   );
   const materialLabel =
     materialType || formatMaterialTypesToPresentation(flatMaterialTypes?.[0]);
-  const source = getBookmarkSource(application, agency, siteAgencyId);
+  let originText;
+  if (origin?.isCurrentOrigin === false) {
+    if (origin.displayName?.trim()) {
+      originText = Translate({
+        context: "bookmark",
+        label: "added-from",
+        vars: [origin.displayName],
+      });
+    } else {
+      originText = Translate({
+        context: "bookmark",
+        label: "added-from-other-source",
+      });
+    }
+  }
 
   return (
     <article
@@ -256,13 +255,9 @@ const MaterialRowBookmark = ({
               {edition && <span>{edition}</span>}
             </Text>
           )}
-          {source && (
+          {originText && (
             <Text type="text3" className={styles.bookmarkSource}>
-              <Translate
-                context="bookmark"
-                label="added-from"
-                vars={[source]}
-              />
+              {originText}
             </Text>
           )}
         </div>

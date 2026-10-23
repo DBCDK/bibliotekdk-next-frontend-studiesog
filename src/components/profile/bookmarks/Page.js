@@ -26,7 +26,6 @@ import { getSessionStorageItem, setSessionStorageItem } from "@/lib/utils";
 import { useAnalyzeMaterial } from "@/components/hooks/useAnalyzeMaterial";
 import { useOrderFlow } from "@/components/hooks/order";
 import { useModal } from "@/components/_modal";
-import { useSubDomainToBrancId } from "@/components/hooks/useSubDomainToBrancId";
 
 const CONTEXT = "bookmark";
 const ORDER_TRESHHOLD = 25;
@@ -95,7 +94,6 @@ const AnalyseItemAvailability = forwardRef(function AnalyseItemAvailability(
 
 const BookmarkPage = () => {
   const modal = useModal();
-  const { agency: siteAgency } = useSubDomainToBrancId();
   const itemsRef = useRef([]);
   const {
     paginatedBookmarks: bookmarksData,
@@ -512,9 +510,7 @@ const BookmarkPage = () => {
               creators={bookmark.creators}
               materialType={bookmark.materialTypeLabel}
               image={bookmark.image}
-              application={bookmark.application}
-              agency={bookmark.agency}
-              siteAgencyId={siteAgency.agencyId}
+              origin={bookmark.origin}
               hasMaterial={bookmark.hasMaterial}
               isAvailableInSearchProfile={bookmark.isAvailableInSearchProfile}
               id={bookmark?.materialId}
