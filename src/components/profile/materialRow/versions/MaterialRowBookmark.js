@@ -99,6 +99,7 @@ const MaterialRowBookmark = ({
   materialId,
   isSelected,
   image,
+  origin,
   dataCy,
   title,
   titles,
@@ -139,6 +140,21 @@ const MaterialRowBookmark = ({
   );
   const materialLabel =
     materialType || formatMaterialTypesToPresentation(flatMaterialTypes?.[0]);
+  let originText;
+  if (origin?.isCurrentOrigin === false) {
+    if (origin.displayName?.trim()) {
+      originText = Translate({
+        context: "bookmark",
+        label: "added-from",
+        vars: [origin.displayName],
+      });
+    } else {
+      originText = Translate({
+        context: "bookmark",
+        label: "added-from-other-source",
+      });
+    }
+  }
 
   return (
     <article
@@ -174,11 +190,13 @@ const MaterialRowBookmark = ({
       )}
 
       <div className={sharedStyles.materialInfo}>
-        {!!image && (
-          <div className={sharedStyles.imageContainer}>
-            <Cover src={image} size="fill-width" />
-          </div>
-        )}
+        <div className={sharedStyles.imageContainer}>
+          <Cover
+            src={image}
+            size="fill-width"
+            className={cx({ [styles.bookmarkMissingCover]: !image })}
+          />
+        </div>
         <div className={sharedStyles.textContainer}>
           <ConditionalWrapper
             condition={
@@ -235,6 +253,11 @@ const MaterialRowBookmark = ({
             >
               {materialLabel}
               {edition && <span>{edition}</span>}
+            </Text>
+          )}
+          {originText && (
+            <Text type="text3" className={styles.bookmarkSource}>
+              {originText}
             </Text>
           )}
         </div>

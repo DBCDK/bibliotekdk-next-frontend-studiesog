@@ -2064,6 +2064,14 @@
         "da": "materialer",
         "en": "materials"
       },
+      "added-from": {
+        "da": "Tilføjet fra %s",
+        "en": "Added from %s"
+      },
+      "added-from-other-source": {
+        "da": "Tilføjet fra en anden applikation",
+        "en": "Added from another application"
+      },
       "select-all": {
         "da": "Vælg alle",
         "en": "Select All"

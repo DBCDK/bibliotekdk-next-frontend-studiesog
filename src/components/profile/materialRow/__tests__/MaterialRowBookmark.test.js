@@ -86,3 +86,67 @@ test.each([true, false])(
     }
   }
 );
+
+test.each([
+  [{ displayName: "Studiebib", isCurrentOrigin: false }, "Studiebib"],
+  [{ displayName: "bibliotek.dk", isCurrentOrigin: false }, "bibliotek.dk"],
+  [
+    {
+      displayName: "Greve",
+      isCurrentOrigin: false,
+      isCurrentApplication: true,
+    },
+    "Greve",
+  ],
+  [{ displayName: "eReolen", isCurrentOrigin: false }, "eReolen"],
+  [{ displayName: "Ny applikation", isCurrentOrigin: false }, "Ny applikation"],
+  [{ displayName: "Eget bibliotek", isCurrentOrigin: true }, null],
+  [{ displayName: "Ukendt oprindelse", isCurrentOrigin: null }, null],
+  [{ displayName: "Ukendt oprindelse" }, null],
+  [{ displayName: null, isCurrentOrigin: false }, "en anden applikation"],
+  [{ displayName: "", isCurrentOrigin: false }, "en anden applikation"],
+  [{ displayName: "   ", isCurrentOrigin: false }, "en anden applikation"],
+  [{ isCurrentOrigin: false }, "en anden applikation"],
+  [{ displayName: null, isCurrentOrigin: true }, null],
+  [{ displayName: null, isCurrentOrigin: null }, null],
+  [null, null],
+  [undefined, null],
+])("bookmark origin %j", async (origin, expected) => {
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  try {
+    await act(async () =>
+      root.render(<MaterialRowBookmark title="En bog" origin={origin} />)
+    );
+    const source = container.querySelector(".bookmarkSource");
+    if (expected) {
+      expect(source.textContent).toBe(`Tilføjet fra ${expected}`);
+    } else {
+      expect(source).toBeNull();
+    }
+  } finally {
+    await act(async () => root.unmount());
+  }
+});
+
+test("missing cover loses its fixed fallback height when an image arrives", async () => {
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+  const container = document.createElement("div");
+  const root = createRoot(container);
+  try {
+    await act(async () => root.render(<MaterialRowBookmark title="En bog" />));
+    expect(
+      container
+        .querySelector('[data-cy="missing-cover"]')
+        .classList.contains("bookmarkMissingCover")
+    ).toBe(true);
+    await act(async () =>
+      root.render(<MaterialRowBookmark title="En bog" image="/cover.jpg" />)
+    );
+    expect(container.querySelector('[data-cy="cover-present"]')).not.toBeNull();
+    expect(container.querySelector(".bookmarkMissingCover")).toBeNull();
+  } finally {
+    await act(async () => root.unmount());
+  }
+});

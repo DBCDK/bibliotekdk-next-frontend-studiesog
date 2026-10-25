@@ -104,6 +104,7 @@ const BookmarkPage = () => {
     setCurrentPage,
     count,
     isLoading: bookmarsDataLoading,
+    isLoadingMore,
     error: bookmarksError,
   } = useBookmarks({ list: true });
 
@@ -318,7 +319,9 @@ const BookmarkPage = () => {
   const isNothingSelected = checkboxList.length === 0;
 
   const isInitialLoading =
-    (bookmarsDataLoading || isPopulateLoading) && !populatedBookmarks.length;
+    !isLoadingMore &&
+    (bookmarsDataLoading || isPopulateLoading) &&
+    !populatedBookmarks.length;
 
   if (isInitialLoading) {
     return (
@@ -507,6 +510,7 @@ const BookmarkPage = () => {
               creators={bookmark.creators}
               materialType={bookmark.materialTypeLabel}
               image={bookmark.image}
+              origin={bookmark.origin}
               hasMaterial={bookmark.hasMaterial}
               isAvailableInSearchProfile={bookmark.isAvailableInSearchProfile}
               id={bookmark?.materialId}
@@ -536,7 +540,7 @@ const BookmarkPage = () => {
       {totalPages > 1 && (
         <Pagination
           forceMobileView={isMobile}
-          isLoading={bookmarsDataLoading}
+          isLoading={bookmarsDataLoading || isLoadingMore || isPopulateLoading}
           numPages={totalPages}
           currentPage={currentPage}
           className={styles.pagination}

@@ -234,6 +234,13 @@ const useBookmarksCore = ({
     hasCulrUniqueId &&
     !globalError &&
     (!pages || (isMobile && list && !pages[size - 1]));
+  const isLoadingMore = !!(
+    globalLoading &&
+    isMobile &&
+    list &&
+    pages?.length &&
+    size > 1
+  );
 
   function setCurrentPage(page) {
     if (isMobile && list && hasCulrUniqueId) setSize(Math.max(1, page));
@@ -411,6 +418,7 @@ const useBookmarksCore = ({
       : localBookmarks,
     paginatedBookmarks: hasCulrUniqueId ? globalBookmarks : localPage,
     isLoading: hasCulrUniqueId ? globalLoading : !localBookmarks && !localError,
+    isLoadingMore,
     error: (hasCulrUniqueId ? globalError : localError) || mutationError,
     setSortBy,
     currentPage: hasCulrUniqueId ? currentPage : desktopPage,
