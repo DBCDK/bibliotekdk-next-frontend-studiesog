@@ -58,7 +58,7 @@ export const fetchAll = ({
             id
             materialId
             createdAt
-            origin {
+            origin @include(if: $withMaterial) {
               displayName
               isCurrentOrigin
             }
